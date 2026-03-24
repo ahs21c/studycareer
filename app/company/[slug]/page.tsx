@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!c) return { title: 'Company not found' }
   return {
     title: `${c.employer_name} — H1B Visa Sponsorship + Green Card Data`,
-    description: `${c.employer_name} filed ${formatNumber(c.lca_total_2yr)} H1B applications (FY2024-2025), avg salary ${formatSalary(c.avg_salary_fy2025)}. ${c.has_perm ? 'Also sponsors PERM green cards.' : ''}`,
+    description: `${c.employer_name} filed ${formatNumber(c.h1b_total_3yr)} H1B applications, avg salary ${formatSalary(c.h1b_avg_salary)}. ${c.has_perm ? 'Also sponsors PERM green cards.' : ''}`,
   }
 }
 
@@ -31,39 +31,39 @@ export default async function CompanyPage({ params }: Props) {
     <div>
       <CompanyHeader
         name={c.employer_name}
-        sector={c.sector}
-        state={c.state}
-        trend={c.lca_trend}
+        sector={c.sponsor_type ?? ''}
+        state={''}
+        trend={c.h1b_trend}
       />
       <StatCards
-        lcaTotal={c.lca_total_2yr}
-        avgSalary={c.avg_salary_fy2025}
-        permTotal={c.perm_total_4yr}
-        prevailingWage={c.prevailing_wage_avg}
+        lcaTotal={c.h1b_total_3yr}
+        avgSalary={c.h1b_avg_salary}
+        permTotal={c.perm_total_3yr}
+        prevailingWage={null}
         hasPerm={c.has_perm}
-        lcaFy2024={c.lca_fy2024}
-        lcaFy2025={c.lca_fy2025}
+        lcaFy2024={c.h1b_fy2024}
+        lcaFy2025={c.h1b_fy2024}
       />
       <CrossAnalysisCallout hasPerm={c.has_perm} />
       <H1BActivity
-        topJobs={c.top_jobs}
-        topStates={c.top_states}
-        avgSalary={c.avg_salary_fy2025}
-        medianSalary={c.median_salary_fy2025}
-        p75Salary={c.p75_salary_fy2025}
-        prevailingWage={c.prevailing_wage_avg}
-        lcaFy2024={c.lca_fy2024}
-        lcaFy2025={c.lca_fy2025}
+        topJobs={[]}
+        topStates={[]}
+        avgSalary={c.h1b_avg_salary}
+        medianSalary={c.h1b_avg_salary}
+        p75Salary={null}
+        prevailingWage={null}
+        lcaFy2024={c.h1b_fy2024}
+        lcaFy2025={c.h1b_fy2024}
       />
       <GreenCardSection
         hasPerm={c.has_perm}
-        permTotal={c.perm_total_4yr}
-        permCertified={c.perm_certified}
-        permAvgWage={c.perm_avg_wage}
+        permTotal={c.perm_total_3yr}
+        permCertified={c.perm_certified_3yr}
+        permAvgWage={null}
         permFy2021={c.perm_fy2021}
         permFy2022={c.perm_fy2022}
         permFy2023={c.perm_fy2023}
-        permFy2024={c.perm_fy2024}
+        permFy2024={0}
       />
     </div>
   )
