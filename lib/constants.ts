@@ -1,45 +1,75 @@
-export const SECTOR_LABELS: Record<string, string> = {
-  IT_SERVICES: 'IT Services & Consulting',
-  ACCOUNTING: 'Accounting & Audit',
-  ECOMMERCE: 'E-Commerce & Retail Tech',
-  INTERNET_PLATFORMS: 'Internet & Software Platforms',
-  CONSULTING: 'Management Consulting',
-  SEMICONDUCTOR_MFG: 'Semiconductor Manufacturing',
-  PHARMA: 'Pharmaceuticals',
-  BANKING: 'Banking & Finance',
-  INSURANCE: 'Insurance',
-  UNIVERSITIES: 'Universities & Research',
-  HOSPITALS: 'Hospitals & Health Systems',
-  INVESTMENT_SECURITIES: 'Investment & Securities',
-  ADMIN_SUPPORT: 'Administrative & Staffing',
-  TELECOM: 'Telecommunications',
-  AUTOMOTIVE_MFG: 'Automotive Manufacturing',
-  AEROSPACE_MFG: 'Aerospace & Defense',
-  HOLDING_COMPANIES: 'Diversified Holdings',
-  SCIENTIFIC_RD: 'Scientific R&D',
-  ENGINEERING_SERVICES: 'Engineering Services',
-  LEGAL: 'Legal Services',
-  AI_DIGITAL_PLATFORMS: 'AI & Digital Platforms',
-  COMPUTER_ELECTRONICS_MFG: 'Computer & Electronics Mfg',
-  CLOUD_DATA: 'Cloud & Data Services',
-  DEPARTMENT_STORES: 'Retail & Department Stores',
+import { createClient } from './client'
+
+export type Company = {
+  slug: string
+  employer_name: string
+  sector: string
+  state: string
+  lca_total_2yr: number
+  lca_fy2024: number
+  lca_fy2025: number
+  lca_trend: string
+  avg_salary_fy2025: number | null
+  median_salary_fy2025: number | null
+  p75_salary_fy2025: number | null
+  prevailing_wage_avg: number | null
+  top_jobs: string[]
+  top_states: string[]
+  has_perm: boolean
+  perm_total_4yr: number
+  perm_certified: number
+  perm_avg_wage: number | null
+  perm_fy2021: number
+  perm_fy2022: number
+  perm_fy2023: number
+  perm_fy2024: number
 }
 
-export const STATE_NAMES: Record<string, string> = {
-  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas',
-  CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware',
-  DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii',
-  ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
-  KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine',
-  MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota',
-  MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska',
-  NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico',
-  NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
-  OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island',
-  SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas',
-  UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington',
-  WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+export async function getCompanyBySlug(slug: string): Promise<Company | null> {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('company_profiles')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+  return data
 }
 
-export const SITE_NAME = 'StudyCareer'
-export const SITE_DESCRIPTION = 'H1B & green card data for every US employer'
+export async function getTopCompanies(limit = 100): Promise<Company[]> {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('company_profiles')
+    .select('*')
+    .order('lca_total_2yr', { ascending: false })
+    .limit(limit)
+  return data ?? []
+}
+
+export async function searchCompanies(query: string, limit = 8) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('company_profiles')
+    .select('slug, employer_name, lca_total_2yr, has_perm')
+    .ilike('employer_name', `%${query}%`)
+    .order('lca_total_2yr', { ascending: false })
+    .limit(limit)
+  return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean }[]
+}
+
+export async function getH1BByState() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('h1b_by_state')
+    .select('*')
+    .order('approvals', { ascending: false })
+  return data ?? []
+}
+
+export async function getH1BByIndustry() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('h1b_by_industry')
+    .select('*')
+    .order('approvals', { ascending: false })
+  return data ?? []
+}
