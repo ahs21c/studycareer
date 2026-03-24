@@ -4,7 +4,7 @@ import { H1B_BY_STATE } from '@/lib/data/companies'
 
 export const metadata: Metadata = {
   title: 'H1B by State',
-  description: 'H1B visa sponsorship by US state — total approvals and number of sponsoring companies.',
+  description: 'H1B visa sponsorship by US state - total approvals and number of sponsoring companies.',
 }
 export const revalidate = 604800
 
@@ -22,7 +22,7 @@ export default function ByStatePage() {
           <span style={{ color: '#6b7280' }}>By state</span>
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>H1B by state</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>Total H1B approvals by state · FY2022–2024</p>
+        <p style={{ fontSize: 13, color: '#6b7280' }}>Total H1B approvals by state · FY2022-2024</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 80px 80px 120px', gap: 12, padding: '0 12px 8px', fontSize: 10.5, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em' }}>
@@ -39,7 +39,7 @@ export default function ByStatePage() {
             <div key={s.state} style={{
               display: 'grid', gridTemplateColumns: '28px 1fr 80px 80px 120px',
               gap: 12, padding: '10px 12px',
-              className="data-row" style={{ borderColor: undefined, borderRadius: undefined, alignItems: 'center',
+              border: '0.5px solid #e5e7eb', borderRadius: 9, alignItems: 'center',
             }}>
               <span style={{ fontSize: 11, color: '#9ca3af' }}>{i + 1}</span>
               <div>
