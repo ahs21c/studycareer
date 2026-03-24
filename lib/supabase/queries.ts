@@ -65,11 +65,13 @@ export async function getH1BByState() {
   return data ?? []
 }
 
-export async function getH1BByIndustry() {
+export async function searchCompanies(query: string, limit = 8) {
   const supabase = createClient()
   const { data } = await supabase
-    .from('h1b_by_industry')
-    .select('*')
-    .order('approvals', { ascending: false })
-  return data ?? []
+    .from('company_profiles')
+    .select('slug, employer_name, lca_total_2yr, has_perm')
+    .ilike('employer_name', `%${query}%`)
+    .order('lca_total_2yr', { ascending: false })
+    .limit(limit)
+  return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean }[]
 }
