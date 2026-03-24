@@ -1,68 +1,79 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
-import { BLOG_POSTS } from '@/lib/data/companies'
 
-export const metadata: Metadata = {
-  title: 'Blog — H1B & Immigration Guides',
-  description: 'Data-driven guides on H1B visa strategy, green card sponsorship, salary benchmarks, and US immigration policy.',
+interface BlogPost {
+  slug: string
+  title: string
+  excerpt: string
+  date: string
+  link: string
 }
 
-export const revalidate = 3600
-
-const ALL_POSTS = [
-  ...BLOG_POSTS,
-  {
-    slug: 'h1b-cap-exempt-guide-2026',
-    category: 'GUIDE',
-    title: 'Cap-exempt H1B: universities and nonprofits that bypass the lottery',
-    date: 'Mar 5, 2026',
-  },
-  {
-    slug: 'india-green-card-wait-times',
-    category: 'GREEN CARD',
-    title: 'India EB-2/EB-3 wait times in 2026: what the data actually shows',
-    date: 'Feb 28, 2026',
-  },
-  {
-    slug: 'e2-visa-korean-investors',
-    category: 'VISA',
-    title: 'E-2 visa for Korean investors: 6,778 issued in FY2024',
-    date: 'Feb 20, 2026',
-  },
-]
-
-const CATEGORY_COLORS: Record<string, string> = {
-  RANKINGS: 'text-[#185FA5]',
-  SALARY: 'text-[#854F0B]',
-  POLICY: 'text-[#166534]',
-  GUIDE: 'text-[#6b21a8]',
-  'GREEN CARD': 'text-[#3B6D11]',
-  VISA: 'text-[#0F6E56]',
+async function getBlogPosts(): Promise<BlogPost[]> {
+  try {
+    const res = await fetch(
+      'https://ahs21c.blogspot.com/feeds/posts/default?alt=json&max-results=12',
+      { next: { revalidate: 3600 } }
+    )
+    if (!res.ok) return []
+    const data = await res.json()
+    const entries = data.feed?.entry ?? []
+    return entries.map((entry: Record<string, unknown>) => {
+      const links = entry.link as { rel: string; href: string }[]
+      const link = links?.find((l) => l.rel === 'alternate')?.href ?? ''
+      const slug = link.split('/').pop()?.replace('.html', '') ?? ''
+      const content = (entry.content as { $t: string } | undefined)?.$t ?? 
+                      (entry.summary as { $t: string } | undefined)?.$t ?? ''
+      const excerpt = content.replace(/<[^>]+>/g, '').slice(0, 120) + '...'
+      const dateRaw = (entry.published as { $t: string })?.$t ?? ''
+      const date = dateRaw ? new Date(dateRaw).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''
+      const title = (entry.title as { $t: string })?.$t ?? 'Untitled'
+      return { slug, title, excerpt, date, link }
+    })
+  } catch {
+    return []
+  }
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getBlogPosts()
+
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold mb-1">Blog</h1>
-        <p className="text-sm text-gray-500">H1B strategy, salary data, and immigration guides.</p>
+      <div style={{ paddingBottom: 20, borderBottom: '0.5px solid #e5e7eb', marginBottom: 24 }}>
+        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>Blog</h1>
+        <p style={{ fontSize: 13, color: '#6b7280' }}>H1B, green card, and US career guides for international students.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {ALL_POSTS.map(post => (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 hover:shadow-sm transition-all"
-          >
-            <div className={`text-[11px] font-medium mb-1.5 ${CATEGORY_COLORS[post.category] ?? 'text-[#185FA5]'}`}>
-              {post.category}
-            </div>
-            <div className="text-sm font-medium leading-snug mb-2">{post.title}</div>
-            <div className="text-xs text-gray-400">{post.date}</div>
-          </Link>
-        ))}
-      </div>
+      {posts.length === 0 ? (
+        <div style={{ padding: '40px 0', textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>
+          No posts available. Check back soon.
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {posts.map((post) => (
+            
+              key={post.slug}
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'block', textDecoration: 'none' }}
+            >
+              <div className="sc-card" style={{ padding: '14px 16px' }}>
+                <div style={{ fontSize: 12.5, fontWeight: 500, color: '#1a1a1a', marginBottom: 5, lineHeight: 1.45 }}>
+                  {post.title}
+                </div>
+                <div style={{ fontSize: 11.5, color: '#6b7280', lineHeight: 1.55, marginBottom: 8 }}>
+                  {post.excerpt}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 11, color: '#9ca3af' }}>{post.date}</span>
+                  <span style={{ fontSize: 11, color: '#185FA5', fontWeight: 500 }}>Read →</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
