@@ -3,10 +3,10 @@
 import { useState } from 'react'
 
 const WAGE_LEVELS = [
-  { level: 1, label: 'Level 1 — Entry',          desc: 'Below median for occupation/location', tickets: 1, rate: 15, bg: '#FCEBEB', text: '#A32D2D', barColor: '#E24B4A' },
-  { level: 2, label: 'Level 2 — Qualified',       desc: 'At or near median',                   tickets: 2, rate: 25, bg: '#FAEEDA', text: '#854F0B', barColor: '#EF9F27' },
-  { level: 3, label: 'Level 3 — Experienced',     desc: 'Above median',                        tickets: 3, rate: 40, bg: '#E6F1FB', text: '#185FA5', barColor: '#378ADD' },
-  { level: 4, label: 'Level 4 — Fully Competent', desc: 'Top of prevailing wage range',        tickets: 4, rate: 61, bg: '#EAF3DE', text: '#3B6D11', barColor: '#639922' },
+  { level: 1, label: 'Level 1 - Entry',          desc: 'Below median for occupation/location', tickets: 1, rate: 15, bg: '#FCEBEB', text: '#A32D2D', barColor: '#E24B4A' },
+  { level: 2, label: 'Level 2 - Qualified',       desc: 'At or near median',                   tickets: 2, rate: 25, bg: '#FAEEDA', text: '#854F0B', barColor: '#EF9F27' },
+  { level: 3, label: 'Level 3 - Experienced',     desc: 'Above median',                        tickets: 3, rate: 40, bg: '#E6F1FB', text: '#185FA5', barColor: '#378ADD' },
+  { level: 4, label: 'Level 4 - Fully Competent', desc: 'Top of prevailing wage range',        tickets: 4, rate: 61, bg: '#EAF3DE', text: '#3B6D11', barColor: '#639922' },
 ]
 
 const OCCUPATIONS = [
@@ -108,7 +108,7 @@ export default function LotteryPage() {
       {yearsOPT > 0 && (
         <div style={{ padding: '14px 16px', border: '0.5px solid #B5D4F4', background: '#E6F1FB', borderRadius: 10, marginBottom: 14 }}>
           <div style={{ fontSize: 11, fontWeight: 500, color: '#185FA5', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 6 }}>
-            Cumulative odds — {attempts} attempt{attempts > 1 ? 's' : ''} on OPT/STEM OPT
+            Cumulative odds - {attempts} attempt{attempts > 1 ? 's' : ''} on OPT/STEM OPT
           </div>
           <div style={{ fontSize: 28, fontWeight: 500, color: '#0C447C', letterSpacing: '-0.5px' }}>{oddsTotal}%</div>
           <div style={{ fontSize: 11.5, color: '#185FA5', marginTop: 4, opacity: .8 }}>
@@ -119,7 +119,7 @@ export default function LotteryPage() {
 
       <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 14 }}>
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>
-          All wage levels — FY2027 estimated rates
+          All wage levels - FY2027 estimated rates
         </div>
         {WAGE_LEVELS.map(w => (
           <div key={w.level} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
@@ -139,7 +139,7 @@ export default function LotteryPage() {
       <div style={{ padding: '12px 14px', background: '#FAEEDA', borderRadius: 8, fontSize: 11.5, color: '#633806', lineHeight: 1.65 }}>
   <strong style={{ fontWeight: 500 }}>Disclaimer:</strong> Selection rates are DHS modeling estimates for FY2027 and are not guaranteed. 
   Actual rates depend on total registration volume and may change. 
-  Wage level determination is based on DOL prevailing wage for your occupation and location — confirm with your employer or immigration attorney. 
+  Wage level determination is based on DOL prevailing wage for your occupation and location - confirm with your employer or immigration attorney. 
   Legal challenges to the wage-weighted lottery rule are ongoing. Not legal or immigration advice.
 </div>
       </div>
