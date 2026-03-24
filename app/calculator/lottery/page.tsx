@@ -50,7 +50,7 @@ export default function LotteryPage() {
       <div style={{ paddingBottom: 20, borderBottom: '0.5px solid #e5e7eb', marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#9ca3af', marginBottom: 12 }}>
           <a href="/" style={{ color: '#9ca3af' }}>Home</a>
-          <span>›</span>
+          <span>&rsaquo;</span>
           <span style={{ color: '#6b7280' }}>H1B lottery calculator</span>
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>H1B lottery calculator</h1>
@@ -91,15 +91,15 @@ export default function LotteryPage() {
         </div>
       </div>
 
-      <div style={{ padding: '20px', background: wl.bg, border: `0.5px solid ${wl.barColor}40`, borderRadius: 10, marginBottom: 14 }}>
+      <div style={{ padding: '20px', background: wl.bg, border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 500, color: wl.text, marginBottom: 3 }}>{wl.label}</div>
-            <div style={{ fontSize: 11.5, color: wl.text, opacity: .75 }}>{wl.desc} · {wl.tickets} ticket{wl.tickets > 1 ? 's' : ''} in lottery pool</div>
+            <div style={{ fontSize: 11.5, color: wl.text, opacity: .75 }}>{wl.desc} - {wl.tickets} ticket{wl.tickets > 1 ? 's' : ''} in lottery pool</div>
           </div>
           <div style={{ fontSize: 36, fontWeight: 500, color: wl.text, letterSpacing: '-1px' }}>{wl.rate}%</div>
         </div>
-        <div style={{ height: 8, background: `${wl.barColor}30`, borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ height: 8, background: '#fff', borderRadius: 4, overflow: 'hidden' }}>
           <div style={{ height: '100%', background: wl.barColor, borderRadius: 4, width: `${wl.rate}%`, transition: 'width .3s' }} />
         </div>
         <div style={{ fontSize: 11, color: wl.text, opacity: .7, marginTop: 6 }}>Single-year selection probability</div>
@@ -137,11 +137,10 @@ export default function LotteryPage() {
       </div>
 
       <div style={{ padding: '12px 14px', background: '#FAEEDA', borderRadius: 8, fontSize: 11.5, color: '#633806', lineHeight: 1.65 }}>
-  <strong style={{ fontWeight: 500 }}>Disclaimer:</strong> Selection rates are DHS modeling estimates for FY2027 and are not guaranteed. 
-  Actual rates depend on total registration volume and may change. 
-  Wage level determination is based on DOL prevailing wage for your occupation and location - confirm with your employer or immigration attorney. 
-  Legal challenges to the wage-weighted lottery rule are ongoing. Not legal or immigration advice.
-</div>
+        <strong style={{ fontWeight: 500 }}>Disclaimer:</strong> Selection rates are DHS modeling estimates for FY2027 and are not guaranteed.
+        Actual rates depend on total registration volume and may change.
+        Wage level determination is based on DOL prevailing wage for your occupation and location - confirm with your employer or immigration attorney.
+        Legal challenges to the wage-weighted lottery rule are ongoing. Not legal or immigration advice.
       </div>
     </div>
   )
