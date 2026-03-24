@@ -75,3 +75,11 @@ export async function searchCompanies(query: string, limit = 8) {
     .limit(limit)
   return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean }[]
 }
+export async function getH1BByIndustry() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('h1b_by_industry')
+    .select('*')
+    .order('approvals', { ascending: false })
+  return data ?? []
+}
