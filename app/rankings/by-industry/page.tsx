@@ -1,15 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { H1B_BY_INDUSTRY } from '@/lib/data/companies'
+import { getH1BByIndustry } from '@/lib/supabase/queries'
 
 export const metadata: Metadata = {
   title: 'H1B by Industry',
-  description: 'H1B visa sponsorship by industry sector — approvals and company counts.',
+  description: 'H1B visa sponsorship by industry sector - approvals and company counts.',
 }
 export const revalidate = 604800
 
-export default function ByIndustryPage() {
-  const max = H1B_BY_INDUSTRY[0].approvals
+export default async function ByIndustryPage() {
+  const industries = await getH1BByIndustry()
+  const max = industries[0]?.approvals ?? 1
+  const total = industries.reduce((s, x) => s + x.approvals, 0)
 
   return (
     <div>
@@ -22,7 +24,7 @@ export default function ByIndustryPage() {
           <span style={{ color: '#6b7280' }}>By industry</span>
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>H1B by industry</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>Total H1B approvals by industry · FY2022–2024</p>
+        <p style={{ fontSize: 13, color: '#6b7280' }}>Total H1B approvals by industry · FY2022-2024</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 88px 88px 120px', gap: 12, padding: '0 12px 8px', fontSize: 10.5, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em' }}>
@@ -33,15 +35,11 @@ export default function ByIndustryPage() {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {H1B_BY_INDUSTRY.map((ind, i) => {
+        {industries.map((ind, i) => {
           const pct = Math.round((ind.approvals / max) * 100)
-          const sharePct = Math.round((ind.approvals / H1B_BY_INDUSTRY.reduce((s, x) => s + x.approvals, 0)) * 100)
+          const sharePct = Math.round((ind.approvals / total) * 100)
           return (
-            <div key={ind.industry} style={{
-              display: 'grid', gridTemplateColumns: '28px 1fr 88px 88px 120px',
-              gap: 12, padding: '10px 12px',
-              border: '0.5px solid #e5e7eb', borderRadius: 9, alignItems: 'center',
-            }}>
+            <div key={ind.industry} style={{ display: 'grid', gridTemplateColumns: '28px 1fr 88px 88px 120px', gap: 12, padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9, alignItems: 'center' }}>
               <span style={{ fontSize: 11, color: '#9ca3af' }}>{i + 1}</span>
               <div>
                 <div style={{ fontSize: 12.5, fontWeight: 500 }}>{ind.industry}</div>

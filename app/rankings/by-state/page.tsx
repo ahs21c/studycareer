@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { H1B_BY_STATE } from '@/lib/data/companies'
+import { getH1BByState } from '@/lib/supabase/queries'
 
 export const metadata: Metadata = {
   title: 'H1B by State',
@@ -8,8 +8,9 @@ export const metadata: Metadata = {
 }
 export const revalidate = 604800
 
-export default function ByStatePage() {
-  const max = H1B_BY_STATE[0].approvals
+export default async function ByStatePage() {
+  const states = await getH1BByState()
+  const max = states[0]?.approvals ?? 1
 
   return (
     <div>
@@ -33,14 +34,10 @@ export default function ByStatePage() {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {H1B_BY_STATE.map((s, i) => {
+        {states.map((s, i) => {
           const pct = Math.round((s.approvals / max) * 100)
           return (
-            <div key={s.state} style={{
-              display: 'grid', gridTemplateColumns: '28px 1fr 80px 80px 120px',
-              gap: 12, padding: '10px 12px',
-              border: '0.5px solid #e5e7eb', borderRadius: 9, alignItems: 'center',
-            }}>
+            <div key={s.state} style={{ display: 'grid', gridTemplateColumns: '28px 1fr 80px 80px 120px', gap: 12, padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9, alignItems: 'center' }}>
               <span style={{ fontSize: 11, color: '#9ca3af' }}>{i + 1}</span>
               <div>
                 <div style={{ fontSize: 12.5, fontWeight: 500 }}>{s.state}</div>

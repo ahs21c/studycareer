@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { COMPANIES } from '@/lib/data/companies'
+import { getCompanyBySlug } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
 import CompanyHeader from '@/components/company/CompanyHeader'
 import StatCards from '@/components/company/StatCards'
@@ -14,17 +14,17 @@ interface Props { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const c = COMPANIES[slug]
+  const c = await getCompanyBySlug(slug)
   if (!c) return { title: 'Company not found' }
   return {
     title: `${c.employer_name} — H1B Visa Sponsorship + Green Card Data`,
-    description: `${c.employer_name} filed ${formatNumber(c.lca_total_2yr)} H1B applications (FY2024–2025), avg salary ${formatSalary(c.avg_salary_fy2025)}. ${c.has_perm ? 'Also sponsors PERM green cards.' : ''}`,
+    description: `${c.employer_name} filed ${formatNumber(c.lca_total_2yr)} H1B applications (FY2024-2025), avg salary ${formatSalary(c.avg_salary_fy2025)}. ${c.has_perm ? 'Also sponsors PERM green cards.' : ''}`,
   }
 }
 
 export default async function CompanyPage({ params }: Props) {
   const { slug } = await params
-  const c = COMPANIES[slug]
+  const c = await getCompanyBySlug(slug)
   if (!c) notFound()
 
   return (

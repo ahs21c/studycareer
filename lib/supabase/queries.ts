@@ -1,17 +1,32 @@
-import { createClient } from './server'
+import { createClient } from './client'
 
-export type SearchResult = {
+export type Company = {
   slug: string
   employer_name: string
   sector: string
+  state: string
   lca_total_2yr: number
+  lca_fy2024: number
+  lca_fy2025: number
   lca_trend: string
   avg_salary_fy2025: number | null
+  median_salary_fy2025: number | null
+  p75_salary_fy2025: number | null
+  prevailing_wage_avg: number | null
+  top_jobs: string[]
+  top_states: string[]
   has_perm: boolean
+  perm_total_4yr: number
+  perm_certified: number
+  perm_avg_wage: number | null
+  perm_fy2021: number
+  perm_fy2022: number
+  perm_fy2023: number
+  perm_fy2024: number
 }
 
-export async function getCompanyBySlug(slug: string) {
-  const supabase = await createClient()
+export async function getCompanyBySlug(slug: string): Promise<Company | null> {
+  const supabase = createClient()
   const { data } = await supabase
     .from('company_profiles')
     .select('*')
@@ -20,42 +35,41 @@ export async function getCompanyBySlug(slug: string) {
   return data
 }
 
-export async function searchCompanies(query: string, limit = 8): Promise<SearchResult[]> {
-  const supabase = await createClient()
-  const { data } = await supabase.rpc('search_companies', {
-    query,
-    result_limit: limit,
-    offset_val: 0,
-  })
-  return data ?? []
-}
-
-export async function getSectorCompanies(sector: string, limit = 50) {
-  const supabase = await createClient()
-  const { data } = await supabase.rpc('get_sector_companies', {
-    sector_name: sector,
-    result_limit: limit,
-    offset_val: 0,
-  })
-  return data ?? []
-}
-
-export async function searchCapExempt(query: string, limit = 20) {
-  const supabase = await createClient()
-  const { data } = await supabase.rpc('search_cap_exempt', {
-    query,
-    result_limit: limit,
-  })
-  return data ?? []
-}
-
-export async function getSchoolPipelines(university: string) {
-  const supabase = await createClient()
+export async function getTopCompanies(limit = 100): Promise<Company[]> {
+  const supabase = createClient()
   const { data } = await supabase
-    .from('school_pipelines')
+    .from('company_profiles')
     .select('*')
-    .ilike('university_std', `%${university}%`)
-    .order('perm_count', { ascending: false })
-    .limit(30)
+    .order('lca_total_2yr', { ascending: false })
+    .limit(limit)
+  return data ?? []
+}
+
+export async function searchCompanies(query: string, limit = 8): Promise<Company[]> {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('company_profiles')
+    .select('slug, employer_name, lca_total_2yr, has_perm')
+    .ilike('employer_name', `%${query}%`)
+    .order('lca_total_2yr', { ascending: false })
+    .limit(limit)
+  return data ?? []
+}
+
+export async function getH1BByState() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('h1b_by_state')
+    .select('*')
+    .order('approvals', { ascending: false })
+  return data ?? []
+}
+
+export async function getH1BByIndustry() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('h1b_by_industry')
+    .select('*')
+    .order('approvals', { ascending: false })
   return data ?? []
 }
