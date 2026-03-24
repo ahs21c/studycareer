@@ -21,7 +21,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       const links = entry.link as { rel: string; href: string }[]
       const link = links?.find((l) => l.rel === 'alternate')?.href ?? ''
       const slug = link.split('/').pop()?.replace('.html', '') ?? ''
-      const content = (entry.content as { $t: string } | undefined)?.$t ?? 
+      const content = (entry.content as { $t: string } | undefined)?.$t ??
                       (entry.summary as { $t: string } | undefined)?.$t ?? ''
       const excerpt = content.replace(/<[^>]+>/g, '').slice(0, 120) + '...'
       const dateRaw = (entry.published as { $t: string })?.$t ?? ''
@@ -51,13 +51,7 @@ export default async function BlogPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {posts.map((post) => (
-            
-              key={post.slug}
-              href={post.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: 'block', textDecoration: 'none' }}
-            >
+            <a key={post.slug} href={post.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none' }}>
               <div className="sc-card" style={{ padding: '14px 16px' }}>
                 <div style={{ fontSize: 12.5, fontWeight: 500, color: '#1a1a1a', marginBottom: 5, lineHeight: 1.45 }}>
                   {post.title}
