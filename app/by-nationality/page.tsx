@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import NationalityClient from './NationalityClient'
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function ByNationalityPage() {
-  return <NationalityClient />
+  return (
+    <Suspense fallback={<div style={{ padding: '40px 0', textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>Loading...</div>}>
+      <NationalityClient />
+    </Suspense>
+  )
 }
