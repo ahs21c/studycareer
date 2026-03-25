@@ -1,3 +1,4 @@
+
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getCompanyBySlug } from '@/lib/supabase/queries'
@@ -46,7 +47,6 @@ const SECTOR_LABELS: Record<string, string> = {
   HEALTHCARE: 'Healthcare',
   EDUCATION: 'Education',
 }
-
 
 export default async function CompanyPage({ params }: Props) {
   const { slug } = await params
@@ -126,21 +126,6 @@ export default async function CompanyPage({ params }: Props) {
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>H1B activity</div>
 
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Filing volume · FY2024 vs FY2025</div>
-          {[
-            { label: `${formatNumber(c.lca_fy2024)} · FY24`, pct: 100 },
-            { label: `${formatNumber(c.lca_fy2025)} · FY25`, pct: c.lca_fy2024 > 0 ? Math.round((c.lca_fy2025 / c.lca_fy2024) * 100) : 100 },
-          ].map(b => (
-            <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ flex: 1, height: 7, background: '#f3f4f6', borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{ height: '100%', background: '#185FA5', borderRadius: 4, width: `${Math.min(b.pct, 100)}%` }} />
-              </div>
-              <span style={{ fontSize: 11, color: '#6b7280', width: 100, flexShrink: 0 }}>{b.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Salary distribution (FY2025)</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6 }}>
             {[
@@ -216,7 +201,7 @@ export default async function CompanyPage({ params }: Props) {
               ))}
             </div>
             <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Annual filings</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 12 }}>
               {[
                 { yr: '2021', val: c.perm_fy2021 },
                 { yr: '2022', val: c.perm_fy2022 },
@@ -228,6 +213,9 @@ export default async function CompanyPage({ params }: Props) {
                   <div style={{ fontSize: 13, fontWeight: 500 }}>{formatNumber(item.val)}</div>
                 </div>
               ))}
+            </div>
+            <div style={{ padding: '8px 12px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 7, fontSize: 11, color: '#9ca3af', lineHeight: 1.5 }}>
+              PERM data is based on the exact legal entity name as filed with the U.S. Department of Labor. Companies that changed their legal name may show incomplete historical data.
             </div>
           </>
         )}
