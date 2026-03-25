@@ -77,7 +77,7 @@ export default async function SectorsPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 100px 90px 20px', gap: 12, padding: '0 12px 8px', fontSize: 10.5, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em' }}>
        <span>#</span>
        <span>Sector</span>
-       <span style={{ textAlign: 'right' }}>H1B filings</span>
+       <span style={{ textAlign: 'right' }}>Filings (2yr)</span>
        <span style={{ textAlign: 'right' }}>Avg salary</span>
        <span />
      </div>

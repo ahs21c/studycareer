@@ -106,7 +106,7 @@ export default async function SectorPage({ params }: Props) {
       <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 80px 90px 36px', gap: 12, padding: '0 12px 8px', fontSize: 10.5, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em' }}>
         <span>#</span>
         <span>Company</span>
-        <span style={{ textAlign: 'right' }}>Filings</span>
+        <span style={{ textAlign: 'right' }}>Filings (2yr)</span>
         <span style={{ textAlign: 'right' }}>Avg salary</span>
         <span />
       </div>
