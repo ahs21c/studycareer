@@ -9,12 +9,9 @@ interface SearchBarProps {
   placeholder?: string
 }
 
-export default function SearchBar({
-  large = false,
-  placeholder,
-}: SearchBarProps) {
+export default function SearchBar({ large = false, placeholder }: SearchBarProps) {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Array<{ slug: string; employer_name: string; h1b_total_3yr: number; has_perm: boolean }>>([])
+  const [results, setResults] = useState<Array<{ slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean }>>([])
   const [isOpen, setIsOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -109,7 +106,7 @@ export default function SearchBar({
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontWeight: 500 }}>{r.employer_name}</span>
-                <span style={{ fontSize: 11, color: '#9ca3af' }}>{r.h1b_total_3yr.toLocaleString()}</span>
+                <span style={{ fontSize: 11, color: '#9ca3af' }}>{r.lca_total_2yr.toLocaleString()}</span>
               </div>
               {r.has_perm && (
                 <span style={{ fontSize: 9.5, background: '#EAF3DE', color: '#3B6D11', padding: '2px 7px', borderRadius: 4, fontWeight: 500 }}>
