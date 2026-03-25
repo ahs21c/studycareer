@@ -27,14 +27,14 @@ export default function CitiesPage() {
           <span style={{ color: '#6b7280' }}>Cities</span>
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>Real purchasing power by city</h1>
-        <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 10 }}>After-tax income vs. cost of living · 19 major US cities · Ranked by annual savings at $150K salary</p>
+        <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>After-tax income vs. cost of living · 19 major US cities · Ranked by annual savings at $150K salary</p>
         <Link href="/city/rankings" style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
-          fontSize: 12, fontWeight: 500, color: '#185FA5',
-          background: '#E6F1FB', border: '0.5px solid #B5D4F4',
-          padding: '5px 12px', borderRadius: 6, textDecoration: 'none',
+          fontSize: 12.5, fontWeight: 500, color: '#fff',
+          background: '#185FA5',
+          padding: '8px 16px', borderRadius: 7, textDecoration: 'none',
         }}>
-          View comprehensive rankings — employment · safety · schools · Korean community →
+          View comprehensive city rankings — employment · safety · schools · weather →
         </Link>
       </div>
 
