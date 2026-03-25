@@ -4,7 +4,7 @@ import { CITY_RANKINGS } from '@/lib/data/cities'
 
 export const metadata: Metadata = {
   title: 'Best US Cities for International Workers — Rankings',
-  description: 'Comprehensive city rankings for international workers: employment, real income, green card, safety, schools, Korean community and more.',
+  description: 'Comprehensive city rankings for international workers: employment, real income, green card, safety, schools, community and more.',
 }
 
 const GRADE_STYLE: Record<string, { bg: string; text: string }> = {
@@ -22,7 +22,7 @@ const SCORE_LABELS = [
   { key: 'safety',      label: 'Safety',     emoji: '🛡️' },
   { key: 'school',      label: 'Schools',    emoji: '🎓' },
   { key: 'transit',     label: 'Transit',    emoji: '🚇' },
-  { key: 'korean',      label: 'Korean',     emoji: '🇰🇷' },
+  { key: 'korean', label: 'Community', emoji: '🏘️' },
   { key: 'weather',     label: 'Weather',    emoji: '☀️' },
 ]
 
@@ -51,7 +51,7 @@ export default function CityRankingsPage() {
           <span style={{ color: '#6b7280' }}>Rankings</span>
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>Best cities for international workers</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>Ranked across 8 dimensions · Employment, income, green card, safety, schools, transit, Korean community, weather</p>
+        <p style={{ fontSize: 13, color: '#6b7280' }}>Ranked across 8 dimensions · Employment, income, green card, safety, schools, transit, community, weather</p>
       </div>
 
       <div style={{ padding: '12px 14px', background: '#E6F1FB', border: '0.5px solid #B5D4F4', borderRadius: 8, marginBottom: 20, fontSize: 12, color: '#1e3a5f', lineHeight: 1.6 }}>
