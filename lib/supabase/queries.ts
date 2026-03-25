@@ -151,3 +151,33 @@ export async function getSectorCompanies(sector: string) {
     .limit(50)
   return data ?? []
 }
+export async function searchSchools(query: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('school_pipelines')
+    .select('university_std, perm_count, avg_annual_wage')
+    .ilike('university_std', `%${query}%`)
+    .order('perm_count', { ascending: false })
+    .limit(20)
+  
+  if (!data) return []
+  
+  // 학교별 집계 (같은 학교가 여러 행)
+  const schoolMap: Record<string, { perm_total: number; wage_sum: number; wage_count: number }> = {}
+  for (const row of data) {
+    const name = row.university_std
+    if (!schoolMap[name]) schoolMap[name] = { perm_total: 0, wage_sum: 0, wage_count: 0 }
+    schoolMap[name].perm_total += row.perm_count
+    if (row.avg_annual_wage) {
+      schoolMap[name].wage_sum += row.avg_annual_wage
+      schoolMap[name].wage_count++
+    }
+  }
+  
+  return Object.entries(schoolMap).map(([name, v]) => ({
+    university_std: name,
+    perm_total: v.perm_total,
+    avg_wage: v.wage_count > 0 ? Math.round(v.wage_sum / v.wage_count) : null,
+    slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+  })).sort((a, b) => b.perm_total - a.perm_total)
+}
