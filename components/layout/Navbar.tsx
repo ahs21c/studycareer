@@ -11,6 +11,7 @@ const links = [
   { label: 'Companies',      href: '/rankings/top-100', match: '/company' },
   { label: 'Rankings',       href: '/rankings/top-100', match: '/rankings' },
   { label: 'Sectors',        href: '/sector',           match: '/sector' },
+  { label: 'Schools',        href: '/school',           match: '/school' },
   { label: 'By Nationality', href: '/by-nationality',   match: '/by-nationality' },
   { label: 'Cap-Exempt',     href: '/cap-exempt',       match: '/cap-exempt' },
   { label: 'Calculators',    href: '/calculator/real-income', match: '/calculator' },
