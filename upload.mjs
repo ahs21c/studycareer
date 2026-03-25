@@ -35,7 +35,7 @@ function readXLSX(path) {
 function aggregatePERM(rows) {
   const map = {}
   for (const row of rows) {
-    if (row.CASE_STATUS !== 'Certified') continue
+    if (row.CASE_STATUS !== 'Certified' && row.CASE_STATUS !== 'Certified-Expired') continue
     let name = (row.EMPLOYER_NAME || '').trim().toUpperCase()
   // 이름 정규화
     name = name.replace(/\s{2,}/g, ' ')           // 공백 2개 이상 → 1개
