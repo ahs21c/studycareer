@@ -8,13 +8,14 @@ export default function Navbar() {
   const pathname = usePathname()
 
 const links = [
-    { label: 'Companies',      href: '/search',           match: '/search' },
-    { label: 'Rankings',       href: '/rankings/top-100', match: '/rankings' },
-    { label: 'By Nationality', href: '/by-nationality',   match: '/by-nationality' },
-    { label: 'Cap-Exempt',     href: '/cap-exempt',       match: '/cap-exempt' },
-    { label: 'Calculators',    href: '/calculator/real-income', match: '/calculator' },
-    { label: 'Blog',           href: '/blog',             match: '/blog' },
-  ]
+  { label: 'Companies',      href: '/rankings/top-100', match: '/company' },
+  { label: 'Rankings',       href: '/rankings/top-100', match: '/rankings' },
+  { label: 'Sectors',        href: '/sector',           match: '/sector' },
+  { label: 'By Nationality', href: '/by-nationality',   match: '/by-nationality' },
+  { label: 'Cap-Exempt',     href: '/cap-exempt',       match: '/cap-exempt' },
+  { label: 'Calculators',    href: '/calculator/real-income', match: '/calculator' },
+  { label: 'Blog',           href: '/blog',             match: '/blog' },
+]
 
   return (
     <nav style={{ borderBottom: '0.5px solid #e5e7eb', background: '#fff', position: 'sticky', top: 0, zIndex: 50 }}>

@@ -112,3 +112,42 @@ export async function getCapExempt(search = '', stateFilter = '', typeFilter = '
   const { data } = await query
   return data ?? []
 }
+export async function getSectors() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('sector_rankings')
+    .select('sector, lca_total_2yr, avg_salary_fy2025')
+    .order('lca_total_2yr', { ascending: false })
+  
+  if (!data) return []
+  
+  // 섹터별 집계
+  const sectorMap: Record<string, { total: number; salarySum: number; salaryCount: number }> = {}
+  for (const row of data) {
+    if (!sectorMap[row.sector]) sectorMap[row.sector] = { total: 0, salarySum: 0, salaryCount: 0 }
+    sectorMap[row.sector].total += row.lca_total_2yr
+    if (row.avg_salary_fy2025) {
+      sectorMap[row.sector].salarySum += row.avg_salary_fy2025
+      sectorMap[row.sector].salaryCount++
+    }
+  }
+  
+  return Object.entries(sectorMap)
+    .map(([sector, v]) => ({
+      sector,
+      lca_total: v.total,
+      avg_salary: v.salaryCount > 0 ? Math.round(v.salarySum / v.salaryCount) : null,
+    }))
+    .sort((a, b) => b.lca_total - a.lca_total)
+}
+
+export async function getSectorCompanies(sector: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('sector_rankings')
+    .select('*')
+    .eq('sector', sector)
+    .order('lca_total_2yr', { ascending: false })
+    .limit(50)
+  return data ?? []
+}
