@@ -102,7 +102,7 @@ export default function LotteryPage() {
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 6 }}>H1B lottery calculator</h1>
         <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 10 }}>Estimate your FY2027+ selection odds under the wage-weighted lottery system.</p>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EAF3DE', border: '0.5px solid #b6daa0', borderRadius: 6, padding: '5px 12px', fontSize: 11.5, color: '#2d5a1b', fontWeight: 500 }}>
-          ✦ AI labor market impact factored in — based on research from Goldman Sachs, McKinsey, MIT, Oxford & 7 others
+          ✦ AI labor market impact factored in — based on research from global educational institutions and professional agencies.
         </div>
       </div>
 
