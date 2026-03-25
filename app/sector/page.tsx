@@ -74,33 +74,33 @@ export default async function SectorsPage() {
         <p style={{ fontSize: 13, color: '#6b7280' }}>{sectors.length} sectors · FY2024-2025 LCA filings</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 100px 90px 20px', gap: 12, padding: '0 12px 8px', fontSize: 10.5, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em' }}>
-       <span>#</span>
-       <span>Sector</span>
-       <span style={{ textAlign: 'right' }}>Filings (2yr)</span>
-       <span style={{ textAlign: 'right' }}>Avg salary</span>
-       <span />
-     </div>
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {sectors.map((s, i) => (
-        <Link key={s.sector} href={`/sector/${toSlug(s.sector)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <div style={{ padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 100px 90px 20px', gap: 12, alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ fontSize: 11, color: '#9ca3af' }}>{i + 1}</span>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 12.5, fontWeight: 500 }}>{toLabel(s.sector)}</span>
-        <span style={{ fontSize: 11, fontWeight: 500, color: '#185FA5' }}>View companies →</span>
-      </div>
-        <span style={{ fontSize: 12.5, fontWeight: 500, textAlign: 'right' }}>{formatNumber(s.lca_total)}</span>
-        <span style={{ fontSize: 12.5, textAlign: 'right', color: '#6b7280' }}>{formatSalary(s.avg_salary)}</span>
-        <span style={{ fontSize: 12, color: '#9ca3af', textAlign: 'right' }}>›</span>
-      </div>
-              <div style={{ marginLeft: 40 }}>
+          <Link key={s.sector} href={`/sector/${toSlug(s.sector)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
+
+              {/* 상단 행 */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 11, color: '#9ca3af', width: 20, flexShrink: 0 }}>{i + 1}</span>
+                  <span style={{ fontSize: 12.5, fontWeight: 500 }}>{toLabel(s.sector)}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+                  <span style={{ fontSize: 12, color: '#6b7280' }}>{formatSalary(s.avg_salary)}</span>
+                  <span style={{ fontSize: 12.5, fontWeight: 500 }}>{formatNumber(s.lca_total)}</span>
+                  <span style={{ fontSize: 11.5, fontWeight: 500, color: '#185FA5', background: '#E6F1FB', padding: '3px 10px', borderRadius: 5 }}>
+                    View →
+                  </span>
+                </div>
+              </div>
+
+              {/* 바 차트 */}
+              <div style={{ marginLeft: 28 }}>
                 <div style={{ height: 4, background: '#f3f4f6', borderRadius: 2, overflow: 'hidden' }}>
                   <div style={{ height: '100%', background: '#185FA5', borderRadius: 2, width: `${Math.round((s.lca_total / maxTotal) * 100)}%` }} />
                 </div>
               </div>
+
             </div>
           </Link>
         ))}
