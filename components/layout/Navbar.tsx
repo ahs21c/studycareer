@@ -8,7 +8,7 @@ export default function Navbar() {
   const pathname = usePathname()
 
 const links = [
-  { label: 'Companies',      href: '/rankings/top-100', match: '/company' },
+  { label: 'Companies',      href: '/search', match: '/company' },
   { label: 'Rankings',       href: '/rankings/top-100', match: '/rankings' },
   { label: 'Sectors',        href: '/sector',           match: '/sector' },
   { label: 'Schools',        href: '/school',           match: '/school' },
