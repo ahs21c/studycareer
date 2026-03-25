@@ -1,11 +1,9 @@
-import { SITE_STATS } from '@/lib/data/companies'
-
 export default function StatsBar() {
   const stats = [
-    { value: SITE_STATS.companies_tracked.toLocaleString(), label: 'Companies tracked', highlight: true },
-    { value: '1.57M',                                        label: 'H1B records' },
-    { value: SITE_STATS.gc_sponsors.toLocaleString(),        label: 'Green card sponsors' },
-    { value: SITE_STATS.sectors.toString(),                  label: 'Industry sectors' },
+    { value: '93,955', label: 'Companies tracked', highlight: true },
+    { value: '1.57M',  label: 'H1B records (FY2022-2024)' },
+    { value: '9,191',  label: 'Green card sponsors' },
+    { value: '60',     label: 'Industry sectors' },
   ]
 
   return (
