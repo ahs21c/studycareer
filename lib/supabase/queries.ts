@@ -77,3 +77,23 @@ export async function getH1BByIndustry() {
     .order('approvals', { ascending: false })
   return data ?? []
 }
+export async function getSchoolPipeline(university: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('school_pipelines')
+    .select('*')
+    .ilike('university_std', `%${university}%`)
+    .order('perm_count', { ascending: false })
+    .limit(20)
+  return data ?? []
+}
+
+export async function getTopSchools() {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('school_pipelines')
+    .select('university_std, perm_count, avg_annual_wage')
+    .order('perm_count', { ascending: false })
+    .limit(50)
+  return data ?? []
+}
