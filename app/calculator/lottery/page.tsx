@@ -99,8 +99,11 @@ export default function LotteryPage() {
           <span>&rsaquo;</span>
           <span style={{ color: '#6b7280' }}>H1B lottery calculator</span>
         </div>
-        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>H1B lottery calculator</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>Estimate your FY2027+ selection odds under the wage-weighted lottery system.</p>
+        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 6 }}>H1B lottery calculator</h1>
+        <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 10 }}>Estimate your FY2027+ selection odds under the wage-weighted lottery system.</p>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EAF3DE', border: '0.5px solid #b6daa0', borderRadius: 6, padding: '5px 12px', fontSize: 11.5, color: '#2d5a1b', fontWeight: 500 }}>
+          ✦ AI labor market impact factored in — based on research from Goldman Sachs, McKinsey, MIT, Oxford & 7 others
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
@@ -144,7 +147,7 @@ export default function LotteryPage() {
 
       <div style={{ padding: '12px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 16 }}>
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
-          Overall selection rate: <span style={{ color: '#1a1a1a', textTransform: 'none', fontWeight: 600 }}>{baseRate}%</span>
+          How competitive is this year's lottery? <span style={{ color: '#1a1a1a', textTransform: 'none', fontWeight: 600 }}>{baseRate}%</span>
           <span style={{ fontWeight: 400, marginLeft: 8 }}>
             {baseRate >= 33 ? '(FY2026 est. ~35%)' : baseRate >= 23 ? '(FY2027 est. ~25%)' : '(conservative)'}
           </span>
