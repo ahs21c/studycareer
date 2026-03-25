@@ -1,18 +1,19 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import SearchBar from '@/components/layout/SearchBar'
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
 
-  const links = [
-    { label: 'Companies',      href: '/rankings/top-100' },
-    { label: 'Rankings',       href: '/rankings/top-100' },
-    { label: 'By Nationality', href: '/by-nationality' },
-    { label: 'Calculators',    href: '/calculator/real-income' },
-    { label: 'Blog',           href: '/blog' },
+const links = [
+    { label: 'Companies',      href: '/search',           match: '/search' },
+    { label: 'Rankings',       href: '/rankings/top-100', match: '/rankings' },
+    { label: 'By Nationality', href: '/by-nationality',   match: '/by-nationality' },
+    { label: 'Cap-Exempt',     href: '/cap-exempt',       match: '/cap-exempt' },
+    { label: 'Calculators',    href: '/calculator/real-income', match: '/calculator' },
+    { label: 'Blog',           href: '/blog',             match: '/blog' },
   ]
 
   return (
@@ -23,15 +24,18 @@ export default function Navbar() {
         </Link>
 
         <div style={{ display: 'flex', gap: 20, flexShrink: 0 }}>
-          {links.map(({ label, href }) => (
-            <Link key={label} href={href} style={{
-              fontSize: 12.5,
-              fontWeight: label === 'By Nationality' ? 500 : 400,
-              color: label === 'By Nationality' ? '#185FA5' : '#6b7280',
-            }}>
-              {label}
-            </Link>
-          ))}
+         {links.map(({ label, href, match }) => {
+            const isActive = pathname.startsWith(match)
+            return (
+              <Link key={label} href={href} style={{
+                fontSize: 12.5,
+                fontWeight: isActive ? 500 : 400,
+                color: isActive ? '#185FA5' : '#6b7280',
+              }}>
+                {label}
+              </Link>
+            )
+          })}
         </div>
 
         <div style={{ flex: 1, maxWidth: 180 }}>

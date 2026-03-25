@@ -3,26 +3,50 @@
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
-import { COMPANIES } from '@/lib/data/companies'
-import { formatNumber, formatSalary, trendColor, trendLabel } from '@/lib/utils'
-import { SECTOR_LABELS } from '@/lib/constants'
+import { searchCompanies } from '@/lib/supabase/queries'
+import { formatNumber, formatSalary } from '@/lib/utils'
+
+const SECTOR_LABELS: Record<string, string> = {
+  IT_SERVICES: 'IT Services',
+  ACCOUNTING: 'Accounting',
+  RETAIL: 'E-Commerce',
+  INTERNET_PLATFORMS: 'Internet & Software',
+  CONSULTING: 'Consulting',
+  SEMICONDUCTOR_MFG: 'Semiconductor',
+  HOLDING_COMPANIES: 'Holdings',
+  AI_DIGITAL_PLATFORMS: 'AI & Digital',
+  COMPUTER_ELECTRONICS_MFG: 'Electronics Mfg',
+  CLOUD_DATA: 'Cloud & Data',
+  IT_SOFTWARE: 'IT & Software',
+}
+
+const TREND_STYLE: Record<string, { bg: string; text: string; label: string }> = {
+  INCREASING: { bg: '#dcfce7', text: '#166534', label: '↑' },
+  STABLE:     { bg: '#dbeafe', text: '#1e40af', label: '→' },
+  DECREASING: { bg: '#fee2e2', text: '#991b1b', label: '↓' },
+  NEW:        { bg: '#f3e8ff', text: '#6b21a8', label: '✦' },
+}
+
+function toTitle(s: string) {
+  return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+}
 
 function SearchResults() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const query = searchParams.get('q') ?? ''
-  const [results, setResults] = useState<typeof import('@/lib/data/companies').TOP_COMPANIES>([])
+  const [results, setResults] = useState<any[]>([])
   const [input, setInput] = useState(query)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setInput(query)
     if (!query || query.length < 2) { setResults([]); return }
-    const q = query.toLowerCase()
-    const matches = Object.values(COMPANIES)
-      .filter(c => c.employer_name.toLowerCase().includes(q))
-      .sort((a, b) => b.lca_total_2yr - a.lca_total_2yr)
-      .slice(0, 20)
-    setResults(matches)
+    setLoading(true)
+    searchCompanies(query, 20).then(data => {
+      setResults(data)
+      setLoading(false)
+    })
   }, [query])
 
   function handleSubmit(e: React.FormEvent) {
@@ -32,67 +56,77 @@ function SearchResults() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="mb-8">
-        <div className="relative max-w-[520px]">
+      <div style={{ paddingBottom: 20, borderBottom: '0.5px solid #e5e7eb', marginBottom: 20 }}>
+        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>Company search</h1>
+        <p style={{ fontSize: 13, color: '#6b7280' }}>Search 93,955 companies by H1B filings and green card sponsorship.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
+        <div style={{ position: 'relative', maxWidth: 520 }}>
           <input
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Search any company..."
-            className="w-full px-4 py-3 pr-24 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#185FA5]"
+            style={{
+              width: '100%', padding: '10px 100px 10px 14px',
+              border: '0.5px solid #d1d5db', borderRadius: 10,
+              fontSize: 13, outline: 'none', color: '#1a1a1a',
+            }}
           />
-          <button
-            type="submit"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#185FA5] text-white px-4 py-1.5 rounded-lg text-sm font-medium"
-          >
+          <button type="submit" style={{
+            position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)',
+            background: '#185FA5', color: '#fff', border: 'none',
+            borderRadius: 7, padding: '7px 14px', fontSize: 12, fontWeight: 500, cursor: 'pointer',
+          }}>
             Search
           </button>
         </div>
       </form>
 
-      {query && results.length === 0 && (
-        <div className="text-sm text-gray-500">
-          No results found for <span className="font-medium text-gray-800">"{query}"</span>.
+      {loading && <div style={{ fontSize: 13, color: '#9ca3af' }}>Searching...</div>}
+
+      {!loading && query && results.length === 0 && (
+        <div style={{ fontSize: 13, color: '#6b7280' }}>
+          No results found for <strong>"{query}"</strong>.
         </div>
       )}
 
-      {results.length > 0 && (
+      {!loading && results.length > 0 && (
         <>
-          <div className="text-sm text-gray-500 mb-4">
-            {results.length} result{results.length !== 1 ? 's' : ''} for{' '}
-            <span className="font-medium text-gray-800">"{query}"</span>
+          <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 12 }}>
+            {results.length} result{results.length !== 1 ? 's' : ''} for <strong style={{ color: '#1a1a1a' }}>"{query}"</strong>
           </div>
-          <div className="space-y-2">
-            {results.map(c => (
-              <Link
-                key={c.slug}
-                href={`/company/${c.slug}`}
-                className="flex items-center justify-between p-3.5 px-4 border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all"
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium">{c.employer_name}</span>
-                    {c.has_perm && (
-                      <span className="text-[10px] bg-[#EAF3DE] text-[#3B6D11] px-2 py-0.5 rounded-md font-medium">
-                        Green card
-                      </span>
-                    )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {results.map((c: any) => {
+              const t = TREND_STYLE[c.lca_trend] ?? TREND_STYLE.STABLE
+              return (
+                <Link key={c.slug} href={`/company/${c.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                        <span style={{ fontSize: 12.5, fontWeight: 500 }}>{toTitle(c.employer_name)}</span>
+                        {c.has_perm && (
+                          <span style={{ fontSize: 9.5, background: '#EAF3DE', color: '#3B6D11', padding: '2px 6px', borderRadius: 4, fontWeight: 500 }}>GC</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9ca3af' }}>
+                        {formatNumber(c.lca_total_2yr)} filings
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 10.5, fontWeight: 500, background: t.bg, color: t.text, padding: '3px 7px', borderRadius: 4 }}>
+                      {t.label}
+                    </span>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {SECTOR_LABELS[c.sector] ?? c.sector} · {formatNumber(c.lca_total_2yr)} filings · {formatSalary(c.avg_salary_fy2025)} avg
-                  </div>
-                </div>
-                <span className={`text-[11px] px-2 py-0.5 rounded-md font-medium ${trendColor(c.lca_trend)}`}>
-                  {trendLabel(c.lca_trend)}
-                </span>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
         </>
       )}
 
       {!query && (
-        <div className="text-sm text-gray-400">Enter a company name to search.</div>
+        <div style={{ fontSize: 13, color: '#9ca3af' }}>Enter a company name to search.</div>
       )}
     </div>
   )
@@ -100,7 +134,7 @@ function SearchResults() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
+    <Suspense fallback={<div style={{ fontSize: 13, color: '#9ca3af' }}>Loading...</div>}>
       <SearchResults />
     </Suspense>
   )

@@ -97,3 +97,18 @@ export async function getTopSchools() {
     .limit(50)
   return data ?? []
 }
+export async function getCapExempt(search = '', stateFilter = '', typeFilter = '') {
+  const supabase = createClient()
+  let query = supabase
+    .from('cap_exempt')
+    .select('*')
+    .order('h1b_total_3yr', { ascending: false })
+    .limit(100)
+
+  if (search) query = query.ilike('employer_name', `%${search}%`)
+  if (stateFilter) query = query.eq('primary_state', stateFilter)
+  if (typeFilter) query = query.eq('institution_type', typeFilter)
+
+  const { data } = await query
+  return data ?? []
+}
