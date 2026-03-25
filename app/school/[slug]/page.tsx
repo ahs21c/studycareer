@@ -82,6 +82,62 @@ export default async function SchoolPage({ params }: Props) {
           </a>
         ))}
       </div>
+
+      {/* National OPT Context */}
+      <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginTop: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>
+          National OPT context (2024)
+        </div>
+        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 12, lineHeight: 1.6 }}>
+          Graduates on OPT/STEM OPT nationwide — benchmarks for your job search timeline.
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
+          {[
+            { label: 'OPT participants', value: '194,554', sub: '+21% vs 2023' },
+            { label: 'STEM OPT', value: '95,384', sub: '+54% vs 2023' },
+            { label: 'CPT', value: '130,586', sub: 'Pre-completion' },
+          ].map(item => (
+            <div key={item.label} style={{ padding: '10px', borderRadius: 8, background: '#fafafa', border: '0.5px solid #f3f4f6', textAlign: 'center' }}>
+              <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 4 }}>{item.label}</div>
+              <div style={{ fontSize: 15, fontWeight: 500 }}>{item.value}</div>
+              <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>{item.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ fontSize: 11, fontWeight: 500, color: '#6b7280', marginBottom: 8 }}>STEM OPT by nationality</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 14 }}>
+          {[
+            { country: 'India', pct: 48.0, color: '#185FA5' },
+            { country: 'China', pct: 20.4, color: '#378ADD' },
+            { country: 'Korea', pct: 2.5, color: '#5EA3E8' },
+            { country: 'Nepal', pct: 2.3, color: '#8BBFF0' },
+            { country: 'Others', pct: 26.9, color: '#e5e7eb' },
+          ].map(item => (
+            <div key={item.country} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 11, color: '#6b7280', width: 50, flexShrink: 0 }}>{item.country}</span>
+              <div style={{ flex: 1, height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                <div style={{ height: '100%', background: item.color, borderRadius: 3, width: `${item.pct}%` }} />
+              </div>
+              <span style={{ fontSize: 11, color: '#6b7280', width: 36, textAlign: 'right', flexShrink: 0 }}>{item.pct}%</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ fontSize: 11, fontWeight: 500, color: '#6b7280', marginBottom: 8 }}>Top STEM majors (F-1 students, 2024)</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {['Computer Science', 'Electrical Engineering', 'Information Technology', 'Mechanical Engineering', 'Data Science'].map(major => (
+            <span key={major} style={{ fontSize: 11, background: '#f3f4f6', color: '#6b7280', padding: '3px 10px', borderRadius: 5 }}>
+              {major}
+            </span>
+          ))}
+        </div>
+
+        <div style={{ marginTop: 12, fontSize: 11, color: '#9ca3af', lineHeight: 1.5 }}>
+          Source: ICE/SEVP 2024 SEVIS by the Numbers Report. National figures — not school-specific.
+        </div>
+      </div>
+
     </div>
   )
 }
