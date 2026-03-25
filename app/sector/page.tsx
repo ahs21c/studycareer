@@ -88,9 +88,9 @@ export default async function SectorsPage() {
         <div style={{ padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 100px 90px 20px', gap: 12, alignItems: 'center', marginBottom: 6 }}>
         <span style={{ fontSize: 11, color: '#9ca3af' }}>{i + 1}</span>
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 12.5, fontWeight: 500 }}>{toLabel(s.sector)}</span>
-        <span style={{ fontSize: 10.5, color: '#9ca3af', marginLeft: 8 }}>View companies →</span>
+        <span style={{ fontSize: 11, fontWeight: 500, color: '#185FA5' }}>View companies →</span>
       </div>
         <span style={{ fontSize: 12.5, fontWeight: 500, textAlign: 'right' }}>{formatNumber(s.lca_total)}</span>
         <span style={{ fontSize: 12.5, textAlign: 'right', color: '#6b7280' }}>{formatSalary(s.avg_salary)}</span>
