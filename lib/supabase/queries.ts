@@ -169,7 +169,7 @@ export async function searchSchools(query: string) {
  
 export async function getSchoolDetail(slug: string) {
   if (!slug) return null
-  
+
   const { createClient: createSupabaseClient } = await import('@supabase/supabase-js')
   const supabase = createSupabaseClient(
     'https://lngwlhggdtwcvwaggidv.supabase.co',

@@ -1,5 +1,9 @@
-import { getSchoolDetail } from '@/lib/supabase/queries'
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { getSchoolDetail } from '@/lib/supabase/queries'
 
 function toTitle(s: string) {
   return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
@@ -20,9 +24,21 @@ function GreaterThanList({ items, color }: { items: string[]; color: string }) {
   )
 }
 
-export default async function SchoolDetailPage({ params }: { params: { slug: string } }) {
-  const school = await getSchoolDetail(params.slug)
+export default function SchoolDetailPage() {
+  const params = useParams()
+  const slug = typeof params.slug === 'string' ? params.slug : ''
+  const [school, setSchool] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    if (!slug) return
+    getSchoolDetail(slug).then(data => {
+      setSchool(data)
+      setLoading(false)
+    })
+  }, [slug])
+
+  if (loading) return <div style={{ fontSize: 13, color: '#9ca3af' }}>Loading...</div>
   if (!school) return <div style={{ fontSize: 13, color: '#6b7280' }}>School not found.</div>
 
   const employers: string[] = school.top_employers ?? []
@@ -45,21 +61,6 @@ export default async function SchoolDetailPage({ params }: { params: { slug: str
         <p style={{ fontSize: 13, color: '#6b7280' }}>
           Where do graduates get hired? · PERM data FY2021–2024
         </p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 20 }}>
-        <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
-          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>PERM filings</div>
-          <div style={{ fontSize: 18, fontWeight: 500 }}>{school.perm_count?.toLocaleString()}</div>
-          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>FY2021–2024</div>
-        </div>
-        <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
-          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Median wage</div>
-          <div style={{ fontSize: 18, fontWeight: 500 }}>
-            {school.avg_wage ? `$${Math.round(school.avg_wage / 1000)}K` : '—'}
-          </div>
-          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>offered at PERM filing</div>
-        </div>
       </div>
 
       <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
