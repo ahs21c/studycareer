@@ -31,6 +31,27 @@ export type Company = {
   perm_total_5yr: number
 }
 
+const STATE_MAP: Record<string, string> = {
+  'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
+  'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
+  'florida': 'FL', 'georgia': 'GA', 'hawaii': 'HI', 'idaho': 'ID',
+  'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS',
+  'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+  'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS',
+  'missouri': 'MO', 'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV',
+  'new hampshire': 'NH', 'new jersey': 'NJ', 'new mexico': 'NM', 'new york': 'NY',
+  'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH', 'oklahoma': 'OK',
+  'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+  'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT',
+  'vermont': 'VT', 'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV',
+  'wisconsin': 'WI', 'wyoming': 'WY', 'district of columbia': 'DC',
+  'seattle': 'WA', 'san francisco': 'CA', 'los angeles': 'CA', 'new york city': 'NY',
+  'nyc': 'NY', 'sf': 'CA', 'la': 'CA', 'chicago': 'IL', 'boston': 'MA',
+  'austin': 'TX', 'dallas': 'TX', 'houston': 'TX', 'denver': 'CO',
+  'atlanta': 'GA', 'miami': 'FL', 'phoenix': 'AZ', 'portland': 'OR',
+  'san diego': 'CA', 'san jose': 'CA', 'minneapolis': 'MN', 'detroit': 'MI',
+}
+
 export async function getCompanyBySlug(slug: string): Promise<Company | null> {
   const supabase = createClient()
   const { data } = await supabase
@@ -53,13 +74,26 @@ export async function getTopCompanies(limit = 100): Promise<Company[]> {
 
 export async function searchCompanies(query: string, limit = 8) {
   const supabase = createClient()
+  const q = query.toLowerCase().trim()
+  const stateCode = STATE_MAP[q]
+
+  if (stateCode) {
+    const { data } = await supabase
+      .from('company_profiles')
+      .select('slug, employer_name, lca_total_2yr, has_perm, employer_state')
+      .or(`employer_state.eq.${stateCode},top_worksite_state.eq.${stateCode}`)
+      .order('lca_total_2yr', { ascending: false })
+      .limit(limit)
+    return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean; employer_state: string }[]
+  }
+
   const { data } = await supabase
     .from('company_profiles')
-    .select('slug, employer_name, lca_total_2yr, has_perm')
+    .select('slug, employer_name, lca_total_2yr, has_perm, employer_state')
     .ilike('employer_name', `%${query}%`)
     .order('lca_total_2yr', { ascending: false })
     .limit(limit)
-  return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean }[]
+  return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean; employer_state: string }[]
 }
 
 export async function getH1BByState() {
@@ -79,6 +113,7 @@ export async function getH1BByIndustry() {
     .order('approvals', { ascending: false })
   return data ?? []
 }
+
 export async function getSchoolPipeline(university: string) {
   const supabase = createClient()
   const { data } = await supabase
@@ -99,6 +134,7 @@ export async function getTopSchools() {
     .limit(50)
   return data ?? []
 }
+
 export async function getCapExempt(search = '', stateFilter = '', typeFilter = '') {
   const supabase = createClient()
   let query = supabase
@@ -114,16 +150,16 @@ export async function getCapExempt(search = '', stateFilter = '', typeFilter = '
   const { data } = await query
   return data ?? []
 }
+
 export async function getSectors() {
   const supabase = createClient()
   const { data } = await supabase
     .from('sector_rankings')
     .select('sector, lca_total_2yr, avg_salary_fy2025')
     .order('lca_total_2yr', { ascending: false })
-  
+
   if (!data) return []
-  
-  // 섹터별 집계
+
   const sectorMap: Record<string, { total: number; salarySum: number; salaryCount: number }> = {}
   for (const row of data) {
     if (!sectorMap[row.sector]) sectorMap[row.sector] = { total: 0, salarySum: 0, salaryCount: 0 }
@@ -133,7 +169,7 @@ export async function getSectors() {
       sectorMap[row.sector].salaryCount++
     }
   }
-  
+
   return Object.entries(sectorMap)
     .map(([sector, v]) => ({
       sector,
@@ -153,6 +189,7 @@ export async function getSectorCompanies(sector: string) {
     .limit(50)
   return data ?? []
 }
+
 export async function searchSchools(query: string) {
   const supabase = createClient()
   const { data } = await supabase
@@ -161,10 +198,9 @@ export async function searchSchools(query: string) {
     .ilike('university_std', `%${query}%`)
     .order('perm_count', { ascending: false })
     .limit(20)
-  
+
   if (!data) return []
-  
-  // 학교별 집계 (같은 학교가 여러 행)
+
   const schoolMap: Record<string, { perm_total: number; wage_sum: number; wage_count: number }> = {}
   for (const row of data) {
     const name = row.university_std
@@ -175,7 +211,7 @@ export async function searchSchools(query: string) {
       schoolMap[name].wage_count++
     }
   }
-  
+
   return Object.entries(schoolMap).map(([name, v]) => ({
     university_std: name,
     perm_total: v.perm_total,
