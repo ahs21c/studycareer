@@ -2,15 +2,15 @@
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
-  const handleGoogleLogin = async () => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-  }
+ const handleGoogleLogin = async () => {
+  const supabase = createClient()
+  await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `https://studycareer-e5xr.vercel.app/auth/callback`,
+    },
+  })
+}
 
   return (
     <div style={{ maxWidth: 400, margin: '80px auto', padding: '0 20px' }}>
