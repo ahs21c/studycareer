@@ -221,8 +221,8 @@ export async function searchSchools(query: string) {
 }
  
 export async function getSchoolDetail(slug: string) {
+  if (!slug) return null
   const supabase = createClient()
- 
   const namePattern = slug.replace(/-/g, ' ')
  
   const { data } = await supabase
