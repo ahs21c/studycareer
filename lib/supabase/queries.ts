@@ -77,11 +77,11 @@ export async function searchCompanies(query: string, limit = 8) {
   const q = query.toLowerCase().trim()
   const stateCode = STATE_MAP[q]
 
-  if (stateCode) {
-    const { data } = await supabase
+if (stateCode) {
+    const { data, error } = await supabase
       .from('company_profiles')
       .select('slug, employer_name, lca_total_2yr, has_perm, employer_state')
-      .or(`employer_state.eq.${stateCode},top_worksite_state.eq.${stateCode}`)
+      .eq('employer_state', stateCode)
       .order('lca_total_2yr', { ascending: false })
       .limit(limit)
     return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean; employer_state: string }[]
