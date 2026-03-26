@@ -1,5 +1,8 @@
-import { createClient } from './client'
 
+복사
+
+import { createClient } from './client'
+ 
 export type Company = {
   slug: string
   employer_name: string
@@ -30,7 +33,7 @@ export type Company = {
   perm_fy2025: number
   perm_total_5yr: number
 }
-
+ 
 const STATE_MAP: Record<string, string> = {
   'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
   'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
@@ -51,7 +54,7 @@ const STATE_MAP: Record<string, string> = {
   'atlanta': 'GA', 'miami': 'FL', 'phoenix': 'AZ', 'portland': 'OR',
   'san diego': 'CA', 'san jose': 'CA', 'minneapolis': 'MN', 'detroit': 'MI',
 }
-
+ 
 export async function getCompanyBySlug(slug: string): Promise<Company | null> {
   const supabase = createClient()
   const { data } = await supabase
@@ -61,7 +64,7 @@ export async function getCompanyBySlug(slug: string): Promise<Company | null> {
     .single()
   return data
 }
-
+ 
 export async function getTopCompanies(limit = 100): Promise<Company[]> {
   const supabase = createClient()
   const { data } = await supabase
@@ -71,14 +74,14 @@ export async function getTopCompanies(limit = 100): Promise<Company[]> {
     .limit(limit)
   return data ?? []
 }
-
+ 
 export async function searchCompanies(query: string, limit = 8) {
   const supabase = createClient()
   const q = query.toLowerCase().trim()
   const stateCode = STATE_MAP[q]
-
-if (stateCode) {
-    const { data, error } = await supabase
+ 
+  if (stateCode) {
+    const { data } = await supabase
       .from('company_profiles')
       .select('slug, employer_name, lca_total_2yr, has_perm, employer_state')
       .eq('employer_state', stateCode)
@@ -86,7 +89,7 @@ if (stateCode) {
       .limit(limit)
     return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean; employer_state: string }[]
   }
-
+ 
   const { data } = await supabase
     .from('company_profiles')
     .select('slug, employer_name, lca_total_2yr, has_perm, employer_state')
@@ -95,7 +98,7 @@ if (stateCode) {
     .limit(limit)
   return (data ?? []) as { slug: string; employer_name: string; lca_total_2yr: number; has_perm: boolean; employer_state: string }[]
 }
-
+ 
 export async function getH1BByState() {
   const supabase = createClient()
   const { data } = await supabase
@@ -104,7 +107,7 @@ export async function getH1BByState() {
     .order('approvals', { ascending: false })
   return data ?? []
 }
-
+ 
 export async function getH1BByIndustry() {
   const supabase = createClient()
   const { data } = await supabase
@@ -113,7 +116,7 @@ export async function getH1BByIndustry() {
     .order('approvals', { ascending: false })
   return data ?? []
 }
-
+ 
 export async function getSchoolPipeline(university: string) {
   const supabase = createClient()
   const { data } = await supabase
@@ -124,7 +127,7 @@ export async function getSchoolPipeline(university: string) {
     .limit(20)
   return data ?? []
 }
-
+ 
 export async function getTopSchools() {
   const supabase = createClient()
   const { data } = await supabase
@@ -134,7 +137,7 @@ export async function getTopSchools() {
     .limit(50)
   return data ?? []
 }
-
+ 
 export async function getCapExempt(search = '', stateFilter = '', typeFilter = '') {
   const supabase = createClient()
   let query = supabase
@@ -142,24 +145,24 @@ export async function getCapExempt(search = '', stateFilter = '', typeFilter = '
     .select('*')
     .order('h1b_total_3yr', { ascending: false })
     .limit(100)
-
+ 
   if (search) query = query.ilike('employer_name', `%${search}%`)
   if (stateFilter) query = query.eq('primary_state', stateFilter)
   if (typeFilter) query = query.eq('institution_type', typeFilter)
-
+ 
   const { data } = await query
   return data ?? []
 }
-
+ 
 export async function getSectors() {
   const supabase = createClient()
   const { data } = await supabase
     .from('sector_rankings')
     .select('sector, lca_total_2yr, avg_salary_fy2025')
     .order('lca_total_2yr', { ascending: false })
-
+ 
   if (!data) return []
-
+ 
   const sectorMap: Record<string, { total: number; salarySum: number; salaryCount: number }> = {}
   for (const row of data) {
     if (!sectorMap[row.sector]) sectorMap[row.sector] = { total: 0, salarySum: 0, salaryCount: 0 }
@@ -169,7 +172,7 @@ export async function getSectors() {
       sectorMap[row.sector].salaryCount++
     }
   }
-
+ 
   return Object.entries(sectorMap)
     .map(([sector, v]) => ({
       sector,
@@ -178,7 +181,7 @@ export async function getSectors() {
     }))
     .sort((a, b) => b.lca_total - a.lca_total)
 }
-
+ 
 export async function getSectorCompanies(sector: string) {
   const supabase = createClient()
   const { data } = await supabase
@@ -189,7 +192,7 @@ export async function getSectorCompanies(sector: string) {
     .limit(50)
   return data ?? []
 }
-
+ 
 export async function searchSchools(query: string) {
   const supabase = createClient()
   const { data } = await supabase
@@ -198,9 +201,9 @@ export async function searchSchools(query: string) {
     .ilike('university_std', `%${query}%`)
     .order('perm_count', { ascending: false })
     .limit(20)
-
+ 
   if (!data) return []
-
+ 
   const schoolMap: Record<string, { perm_total: number; wage_sum: number; wage_count: number }> = {}
   for (const row of data) {
     const name = row.university_std
@@ -211,22 +214,77 @@ export async function searchSchools(query: string) {
       schoolMap[name].wage_count++
     }
   }
-
+ 
   return Object.entries(schoolMap).map(([name, v]) => ({
     university_std: name,
     perm_total: v.perm_total,
     avg_wage: v.wage_count > 0 ? Math.round(v.wage_sum / v.wage_count) : null,
+    // slug: university_std를 URL-safe 문자열로 변환 (getSchoolDetail과 동일 로직)
     slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   })).sort((a, b) => b.perm_total - a.perm_total)
 }
-
+ 
 export async function getSchoolDetail(slug: string) {
   const supabase = createClient()
-  const { data, error } = await supabase
-    .from('school_details')
-    .select('*')
-    .eq('slug', slug)
-    .single()
-  if (error) console.error('getSchoolDetail error:', error)
-  return data
+ 
+  // slug → 학교명 검색 패턴으로 변환 (하이픈을 공백으로)
+  const namePattern = slug.replace(/-/g, ' ')
+ 
+  const { data } = await supabase
+    .from('school_pipelines')
+    .select('university_std, employer_std, perm_count, avg_annual_wage, top_major, top_degree')
+    .ilike('university_std', `%${namePattern}%`)
+    .order('perm_count', { ascending: false })
+    .limit(50)
+ 
+  if (!data || data.length === 0) return null
+ 
+  const school_name = data[0].university_std
+ 
+  // 고용기업 집계
+  const employerMap: Record<string, number> = {}
+  for (const row of data) {
+    if (row.employer_std) {
+      employerMap[row.employer_std] = (employerMap[row.employer_std] ?? 0) + row.perm_count
+    }
+  }
+  const top_employers = Object.entries(employerMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name]) => name)
+ 
+  // 전공 집계
+  const majorMap: Record<string, number> = {}
+  for (const row of data) {
+    if (row.top_major) {
+      majorMap[row.top_major] = (majorMap[row.top_major] ?? 0) + row.perm_count
+    }
+  }
+  const top_majors_detail = Object.entries(majorMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([name]) => name)
+ 
+  // 학위 집계
+  const degreeMap: Record<string, number> = {}
+  for (const row of data) {
+    if (row.top_degree) {
+      degreeMap[row.top_degree] = (degreeMap[row.top_degree] ?? 0) + row.perm_count
+    }
+  }
+  const top_education = Object.entries(degreeMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([name]) => name)
+ 
+  // PERM 합산
+  const perm_count = data.reduce((sum, r) => sum + r.perm_count, 0)
+ 
+  // 평균 임금
+  const wageRows = data.filter(r => r.avg_annual_wage)
+  const avg_wage = wageRows.length > 0
+    ? Math.round(wageRows.reduce((sum, r) => sum + r.avg_annual_wage, 0) / wageRows.length)
+    : null
+ 
+  return { school_name, perm_count, avg_wage, top_employers, top_majors_detail, top_education }
 }
