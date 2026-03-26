@@ -125,15 +125,72 @@ export async function getSchoolPipeline(university: string) {
   return data ?? []
 }
  
+// ============================================================
+// SCHOOL FUNCTIONS — school_details 테이블 사용 (slug 직접 조회)
+// ============================================================
+ 
 export async function getTopSchools() {
   const supabase = createClient()
   const { data } = await supabase
-    .from('school_pipelines')
-    .select('university_std, perm_count, avg_annual_wage')
+    .from('school_details')
+    .select('school_name, slug, perm_count, avg_wage')
     .order('perm_count', { ascending: false })
     .limit(50)
-  return data ?? []
+  
+  if (!data) return []
+ 
+  // 기존 호출부 호환: university_std, avg_annual_wage 형태로 매핑
+  return data.map(row => ({
+    university_std: row.school_name,
+    perm_count: row.perm_count,
+    avg_annual_wage: row.avg_wage,
+    slug: row.slug,
+  }))
 }
+ 
+export async function searchSchools(query: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('school_details')
+    .select('school_name, slug, perm_count, avg_wage')
+    .ilike('school_name', `%${query}%`)
+    .order('perm_count', { ascending: false })
+    .limit(20)
+ 
+  if (!data) return []
+ 
+  return data.map(row => ({
+    university_std: row.school_name,
+    perm_total: row.perm_count,
+    avg_wage: row.avg_wage,
+    slug: row.slug,
+  }))
+}
+ 
+export async function getSchoolDetail(slug: string) {
+  if (!slug) return null
+  const supabase = createClient()
+ 
+  const { data } = await supabase
+    .from('school_details')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+ 
+  if (!data) return null
+ 
+  return {
+    school_name: data.school_name,
+    perm_count: data.perm_count,
+    avg_wage: data.avg_wage,
+    top_employers: data.top_employers ?? [],
+    top_majors_cat: data.top_majors_cat ?? [],
+    top_majors_detail: data.top_majors_detail ?? [],
+    top_education: data.top_education ?? [],
+  }
+}
+ 
+// ============================================================
  
 export async function getCapExempt(search = '', stateFilter = '', typeFilter = '') {
   const supabase = createClient()
@@ -189,93 +246,3 @@ export async function getSectorCompanies(sector: string) {
     .limit(50)
   return data ?? []
 }
- 
-export async function searchSchools(query: string) {
-  const supabase = createClient()
-  const { data } = await supabase
-    .from('school_pipelines')
-    .select('university_std, perm_count, avg_annual_wage')
-    .ilike('university_std', `%${query}%`)
-    .order('perm_count', { ascending: false })
-    .limit(20)
- 
-  if (!data) return []
- 
-  const schoolMap: Record<string, { perm_total: number; wage_sum: number; wage_count: number }> = {}
-  for (const row of data) {
-    const name = row.university_std
-    if (!schoolMap[name]) schoolMap[name] = { perm_total: 0, wage_sum: 0, wage_count: 0 }
-    schoolMap[name].perm_total += row.perm_count
-    if (row.avg_annual_wage) {
-      schoolMap[name].wage_sum += row.avg_annual_wage
-      schoolMap[name].wage_count++
-    }
-  }
- 
-  return Object.entries(schoolMap).map(([name, v]) => ({
-    university_std: name,
-    perm_total: v.perm_total,
-    avg_wage: v.wage_count > 0 ? Math.round(v.wage_sum / v.wage_count) : null,
-    slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-  })).sort((a, b) => b.perm_total - a.perm_total)
-}
- 
-export async function getSchoolDetail(slug: string) {
-  if (!slug) return null
-  const supabase = createClient()
-  const namePattern = slug.replace(/-/g, ' ')
- 
-  const { data } = await supabase
-    .from('school_pipelines')
-    .select('university_std, employer_std, perm_count, avg_annual_wage, top_major, top_degree')
-    .ilike('university_std', `%${namePattern}%`)
-    .order('perm_count', { ascending: false })
-    .limit(50)
- 
-  if (!data || data.length === 0) return null
- 
-  const school_name = data[0].university_std
- 
-  const employerMap: Record<string, number> = {}
-  for (const row of data) {
-    if (row.employer_std) {
-      employerMap[row.employer_std] = (employerMap[row.employer_std] ?? 0) + row.perm_count
-    }
-  }
-  const top_employers = Object.entries(employerMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([name]) => name)
- 
-  const majorMap: Record<string, number> = {}
-  for (const row of data) {
-    if (row.top_major) {
-      majorMap[row.top_major] = (majorMap[row.top_major] ?? 0) + row.perm_count
-    }
-  }
-  const top_majors_detail = Object.entries(majorMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
-    .map(([name]) => name)
- 
-  const degreeMap: Record<string, number> = {}
-  for (const row of data) {
-    if (row.top_degree) {
-      degreeMap[row.top_degree] = (degreeMap[row.top_degree] ?? 0) + row.perm_count
-    }
-  }
-  const top_education = Object.entries(degreeMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4)
-    .map(([name]) => name)
- 
-  const perm_count = data.reduce((sum, r) => sum + r.perm_count, 0)
- 
-  const wageRows = data.filter(r => r.avg_annual_wage)
-  const avg_wage = wageRows.length > 0
-    ? Math.round(wageRows.reduce((sum, r) => sum + r.avg_annual_wage, 0) / wageRows.length)
-    : null
- 
-  return { school_name, perm_count, avg_wage, top_employers, top_majors_detail, top_education }
-}
- 

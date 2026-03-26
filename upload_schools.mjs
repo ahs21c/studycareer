@@ -1,13 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'fs'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('환경변수 없음. .env.local 확인')
-  process.exit(1)
-}
+const SUPABASE_URL = 'https://lngwlhggdtwcvwaggidv.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_ZRCENoenmcQI1XM2uyiNIg_MRFBHxwd'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
