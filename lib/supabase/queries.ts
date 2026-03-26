@@ -222,10 +222,11 @@ export async function searchSchools(query: string) {
 
 export async function getSchoolDetail(slug: string) {
   const supabase = createClient()
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('school_details')
     .select('*')
     .eq('slug', slug)
     .single()
+  if (error) console.error('getSchoolDetail error:', error)
   return data
 }
