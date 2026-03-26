@@ -73,4 +73,22 @@ export default function Navbar() {
               </Link>
               <button
                 onClick={handleSignOut}
-                style={{ fontSize: 12, color: '#6b7280', bac
+                style={{ fontSize: 12, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link href="/login" style={{
+              fontSize: 12.5, fontWeight: 500, color: '#fff',
+              background: '#185FA5', padding: '5px 14px', borderRadius: 6,
+              textDecoration: 'none', whiteSpace: 'nowrap',
+            }}>
+              Sign in
+            </Link>
+          )}
+        </div>
+      </div>
+    </nav>
+  )
+}
