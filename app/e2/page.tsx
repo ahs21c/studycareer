@@ -69,20 +69,10 @@ export default function E2Page() {
       </div>
 
       {/* Key facts */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: 16 }}>
-        {[
-          { label: 'Total E2 issued (FY2024)', value: '412,200', sub: 'All treaty countries' },
-          { label: 'Japan (ranked #1)', value: '94,390', sub: 'Largest E2 user' },
-          { label: 'Korea (ranked #4)', value: '25,550', sub: 'H1B의 3배 규모' },
-          { label: 'Lottery required', value: 'None', sub: 'vs H1B ~25% chance' },
-        ].map(item => (
-          <div key={item.label} style={{ padding: '12px', borderRadius: 9, border: '0.5px solid #e5e7eb' }}>
-            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 5 }}>{item.label}</div>
-            <div style={{ fontSize: 18, fontWeight: 500 }}>{item.value}</div>
-            <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>{item.sub}</div>
-          </div>
-        ))}
-      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+      <span style={{ fontSize: 12, color: '#6b7280' }}>Total E2 issued (FY2024):</span>
+      <span style={{ fontSize: 13, fontWeight: 500, color: '#185FA5' }}>412,200</span>
+     </div>
 
       {/* What is E2 */}
       <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
