@@ -219,3 +219,13 @@ export async function searchSchools(query: string) {
     slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   })).sort((a, b) => b.perm_total - a.perm_total)
 }
+
+export async function getSchoolDetail(slug: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('school_details')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+  return data
+}
