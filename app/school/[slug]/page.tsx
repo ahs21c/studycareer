@@ -1,145 +1,100 @@
-'use client'
-
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { getSchoolDetail } from '@/lib/supabase/queries'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { searchSchools } from '@/lib/supabase/queries'
-import { formatNumber, formatSalary } from '@/lib/utils'
 
-function SchoolSearch() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const query = searchParams.get('q') ?? ''
-  const [input, setInput] = useState(query)
-  const [results, setResults] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+export const revalidate = 2592000
 
-  useEffect(() => {
-    setInput(query)
-    if (!query || query.length < 2) { setResults([]); return }
-    setLoading(true)
-    searchSchools(query).then(data => {
-      setResults(data)
-      setLoading(false)
-    })
-  }, [query])
+function toTitle(s: string) {
+  return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+}
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (input.trim().length >= 2) router.push(`/school?q=${encodeURIComponent(input.trim())}`)
-  }
+function GreaterThanList({ items, color }: { items: string[]; color: string }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4 }}>
+      {items.map((item, i) => (
+        <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: 12.5, color: '#1a1a1a' }}>{toTitle(item)}</span>
+          {i < items.length - 1 && (
+            <span style={{ fontSize: 12, color, fontWeight: 600 }}>›</span>
+          )}
+        </span>
+      ))}
+    </div>
+  )
+}
 
-  const POPULAR = [
-    'University of Illinois',
-    'Carnegie Mellon',
-    'University of Southern California',
-    'New York University',
-    'Purdue University',
-    'University of Texas',
-    'Columbia University',
-    'Georgia Tech',
-  ]
+export default async function SchoolDetailPage({ params }: { params: { slug: string } }) {
+  const school = await getSchoolDetail(params.slug)
+  if (!school) notFound()
+
+  const employers: string[] = school.top_employers ?? []
+  const majorsDetail: string[] = school.top_majors_detail ?? []
+  const education: string[] = school.top_education ?? []
 
   return (
     <div>
       <div style={{ paddingBottom: 20, borderBottom: '0.5px solid #e5e7eb', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#9ca3af', marginBottom: 12 }}>
-          <a href="/" style={{ color: '#9ca3af' }}>Home</a>
+          <Link href="/" style={{ color: '#9ca3af' }}>Home</Link>
           <span>›</span>
-          <span style={{ color: '#6b7280' }}>School pipeline</span>
+          <Link href="/school" style={{ color: '#9ca3af' }}>Schools</Link>
+          <span>›</span>
+          <span style={{ color: '#6b7280' }}>{toTitle(school.school_name)}</span>
         </div>
-        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>School → Company pipeline</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>졸업 후 어느 기업에 취업하나요? PERM 영주권 데이터 기반 실제 취업 경로.</p>
+        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>
+          {toTitle(school.school_name)}
+        </h1>
+        <p style={{ fontSize: 13, color: '#6b7280' }}>
+          Where do graduates get hired? · PERM data FY2021–2024
+        </p>
       </div>
 
-      <div style={{ padding: '12px 14px', background: '#E6F1FB', border: '0.5px solid #B5D4F4', borderRadius: 8, marginBottom: 20, fontSize: 12, color: '#1e3a5f', lineHeight: 1.6 }}>
-        미국 취업비자(H1B) 신청 시 고용주가 DOL에 제출한 PERM 서류에서 외국인 근로자의 출신 학교를 추출한 데이터입니다. FY2021-2024 승인 케이스 기준.
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 20 }}>
+        <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
+          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>PERM filings</div>
+          <div style={{ fontSize: 18, fontWeight: 500 }}>{school.perm_count?.toLocaleString()}</div>
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>FY2021–2024</div>
+        </div>
+        <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
+          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Median wage</div>
+          <div style={{ fontSize: 18, fontWeight: 500 }}>
+            {school.avg_wage ? `$${Math.round(school.avg_wage / 1000)}K` : '—'}
+          </div>
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>offered at PERM filing</div>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <div style={{ position: 'relative', maxWidth: 520 }}>
-          <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', pointerEvents: 'none' }}
-            width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Search your university..."
-            style={{
-              width: '100%', padding: '10px 110px 10px 36px',
-              border: '0.5px solid #d1d5db', borderRadius: 10,
-              fontSize: 13, outline: 'none', color: '#1a1a1a',
-            }}
-          />
-          <button type="submit" style={{
-            position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)',
-            background: '#185FA5', color: '#fff', border: 'none',
-            borderRadius: 7, padding: '7px 14px', fontSize: 12, fontWeight: 500, cursor: 'pointer',
-          }}>
-            Search
-          </button>
+      <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
+        <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>
+          Hiring background
         </div>
-      </form>
-
-      {!query && (
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10 }}>
-            Popular searches
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {POPULAR.map(name => (
-              <button key={name} onClick={() => router.push(`/school?q=${encodeURIComponent(name)}`)} style={{
-                fontSize: 12, background: '#f3f4f6', color: '#6b7280',
-                padding: '5px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
-              }}>
-                {name}
-              </button>
-            ))}
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {employers.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 6 }}>Top employers</div>
+              <GreaterThanList items={employers} color="#185FA5" />
+            </div>
+          )}
+          <div style={{ borderTop: '0.5px solid #f3f4f6' }} />
+          {majorsDetail.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 6 }}>Top majors</div>
+              <GreaterThanList items={majorsDetail} color="#3B6D11" />
+            </div>
+          )}
+          <div style={{ borderTop: '0.5px solid #f3f4f6' }} />
+          {education.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 6 }}>Degree level</div>
+              <GreaterThanList items={education} color="#854F0B" />
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {loading && <div style={{ fontSize: 13, color: '#9ca3af' }}>Searching...</div>}
-
-      {!loading && query && results.length === 0 && (
-        <div style={{ fontSize: 13, color: '#6b7280' }}>
-          No results for <strong>"{query}"</strong>. Try a different spelling.
-        </div>
-      )}
-
-      {!loading && results.length > 0 && (
-        <>
-          <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 12 }}>
-            {results.length} result{results.length !== 1 ? 's' : ''} for <strong style={{ color: '#1a1a1a' }}>"{query}"</strong>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            {results.map((s) => (
-              <Link key={s.slug} href={`/school/${s.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
-                  <div>
-                    <div style={{ fontSize: 12.5, fontWeight: 500, marginBottom: 2 }}>{s.university_std}</div>
-                    <div style={{ fontSize: 11, color: '#9ca3af' }}>Avg PERM wage: {formatSalary(s.avg_wage)}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 500 }}>{formatNumber(s.perm_total)}</div>
-                    <div style={{ fontSize: 10.5, color: '#9ca3af' }}>PERM cases</div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
+      <div style={{ padding: '12px 14px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 8, fontSize: 11, color: '#9ca3af', lineHeight: 1.65 }}>
+        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 certified cases only. Trends shown by relative frequency, not absolute counts.
+      </div>
     </div>
-  )
-}
-
-export default function SchoolPage() {
-  return (
-    <Suspense fallback={<div style={{ fontSize: 13, color: '#9ca3af' }}>Loading...</div>}>
-      <SchoolSearch />
-    </Suspense>
   )
 }
