@@ -4,9 +4,15 @@ import { getSectors } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'H1B by Industry Sector',
-  description: 'Compare H1B visa activity and salaries across 60 industry sectors.',
+  title: 'H1B Visa by Industry Sector | 60 Sectors',
+  description: 'Compare H1B visa filings and salaries across 60 US industry sectors. Find which industries sponsor the most foreign workers — IT, consulting, healthcare, finance and more.',
+  keywords: ['H1B by industry', 'H1B sector', 'work visa industry', 'IT H1B', 'consulting H1B', 'healthcare H1B'],
+  openGraph: {
+    title: 'H1B Visa by Industry Sector | StudyCareer',
+    description: 'Compare H1B visa filings and salaries across 60 US industry sectors.',
+  },
 }
+
 export const revalidate = 604800
 
 const SECTOR_LABELS: Record<string, string> = {

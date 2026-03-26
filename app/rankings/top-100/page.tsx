@@ -4,9 +4,15 @@ import { getTopCompanies } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Top H1B Sponsors',
-  description: 'Top US companies by H1B visa filings (FY2024-2025), salary data and green card sponsorship.',
+  title: 'Top 100 H1B Sponsor Companies | FY2024-2025',
+  description: 'Top 100 US companies ranked by H1B visa filings. See LCA filing counts, average salaries, and green card sponsorship status for the biggest H1B employers.',
+  keywords: ['top H1B sponsors', 'H1B companies list', 'best companies for H1B', 'H1B sponsor ranking', 'OPT employer list'],
+  openGraph: {
+    title: 'Top 100 H1B Sponsor Companies | StudyCareer',
+    description: 'Top 100 US companies ranked by H1B visa filings, salaries, and green card sponsorship.',
+  },
 }
+
 export const revalidate = 604800
 
 const TREND_STYLE: Record<string, { bg: string; text: string; label: string }> = {

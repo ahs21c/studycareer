@@ -2,8 +2,13 @@ import type { Metadata } from 'next'
 import { getCapExempt } from '@/lib/supabase/queries'
 
 export const metadata: Metadata = {
-  title: 'Cap-Exempt H1B Institutions',
-  description: '2,585 universities, nonprofits, and government research orgs that can hire H1B workers outside the annual cap.',
+  title: 'Cap-Exempt H1B Institutions | Universities & Nonprofits',
+  description: '2,585 US universities, nonprofits, and government research organizations that can hire H1B workers outside the annual cap lottery. No lottery required.',
+  keywords: ['cap exempt H1B', 'H1B no lottery', 'university H1B sponsor', 'nonprofit H1B', 'H1B cap exempt institutions', 'OPT cap exempt employer'],
+  openGraph: {
+    title: 'Cap-Exempt H1B Institutions | StudyCareer',
+    description: '2,585 universities and nonprofits that hire H1B workers without the annual cap lottery.',
+  },
 }
 export const revalidate = 2592000
 

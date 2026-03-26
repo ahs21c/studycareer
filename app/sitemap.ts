@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { TOP_COMPANIES, COMPANIES } from '@/lib/data/companies'
 import { SECTOR_LABELS } from '@/lib/constants'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://studycareer.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://studycareer-e5xr.vercel.app'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [

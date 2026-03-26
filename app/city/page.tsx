@@ -3,8 +3,13 @@ import Link from 'next/link'
 import { CITIES } from '@/lib/data/cities'
 
 export const metadata: Metadata = {
-  title: 'US Cities — Real Purchasing Power Guide',
-  description: 'Compare real after-tax income and cost of living across 19 major US cities for international workers.',
+  title: 'US Cities Real Purchasing Power | After-Tax & Cost of Living',
+  description: 'Compare real after-tax income and cost of living across 19 major US cities. Find where your salary goes furthest as an international worker on H1B or OPT.',
+  keywords: ['US city cost of living', 'real income after tax', 'best cities for H1B workers', 'OPT salary comparison', 'purchasing power US cities'],
+  openGraph: {
+    title: 'US Cities Real Purchasing Power | StudyCareer',
+    description: 'Compare real after-tax income and cost of living across 19 major US cities.',
+  },
 }
 
 const GRADE_STYLE: Record<string, { bg: string; text: string }> = {

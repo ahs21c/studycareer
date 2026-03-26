@@ -2,8 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'E2 Treaty Investor Visa — Country List & Sponsor Companies',
-  description: 'E2 visa treaty countries, issuance statistics, and top sponsor companies. No lottery required.',
+  title: 'E2 Visa Countries & Sponsor Companies | No Lottery',
+  description: 'E2 treaty investor visa — eligible countries, issuance statistics, and top US companies sponsoring E2 workers. No annual lottery required.',
+  keywords: ['E2 visa', 'E2 treaty countries', 'E2 sponsor companies', 'investor visa USA', 'no lottery work visa', 'E2 visa eligibility'],
+  openGraph: {
+    title: 'E2 Visa Countries & Sponsor Companies | StudyCareer',
+    description: 'E2 treaty investor visa — eligible countries and top US sponsor companies. No lottery required.',
+  },
 }
 
 const E2_COUNTRIES = [
