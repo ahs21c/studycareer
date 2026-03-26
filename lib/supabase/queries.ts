@@ -1,6 +1,3 @@
-
-복사
-
 import { createClient } from './client'
  
 export type Company = {
@@ -281,3 +278,4 @@ export async function getSchoolDetail(slug: string) {
  
   return { school_name, perm_count, avg_wage, top_employers, top_majors_detail, top_education }
 }
+ 
