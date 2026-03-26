@@ -27,6 +27,8 @@ export type Company = {
   perm_fy2022: number
   perm_fy2023: number
   perm_fy2024: number
+  perm_fy2025: number
+  perm_total_5yr: number
 }
 
 export async function getCompanyBySlug(slug: string): Promise<Company | null> {

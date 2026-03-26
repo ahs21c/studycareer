@@ -57,8 +57,8 @@ export default async function CompanyPage({ params }: Props) {
   const yoy = c.lca_fy2024 > 0
     ? Math.round(((c.lca_fy2025 - c.lca_fy2024) / c.lca_fy2024) * 100)
     : 0
-  const permApprovalRate = c.perm_total_4yr > 0
-    ? Math.round((c.perm_certified / c.perm_total_4yr) * 100)
+  const permApprovalRate = c.perm_total_5yr > 0
+    ? Math.round((c.perm_certified / c.perm_total_5yr) * 100)
     : 0
   const salaryVsPrevailing = c.avg_salary_fy2025 && c.prevailing_wage_avg
     ? Math.round(((c.avg_salary_fy2025 - c.prevailing_wage_avg) / c.prevailing_wage_avg) * 100)
@@ -99,7 +99,7 @@ export default async function CompanyPage({ params }: Props) {
         {[
           { label: 'H1B filings (2yr)', value: formatNumber(c.lca_total_2yr), sub: `${yoy >= 0 ? '+' : ''}${yoy}% vs FY2024`, highlight: true },
           { label: 'Avg salary (FY2025)', value: formatSalary(c.avg_salary_fy2025), sub: `Prevailing: ${formatSalary(c.prevailing_wage_avg)}`, highlight: false },
-          { label: 'Green card filings', value: c.has_perm ? formatNumber(c.perm_total_4yr) : '—', sub: c.has_perm ? 'PERM FY2021–2024' : 'No filings found', highlight: false },
+          { label: 'Green card filings', value: c.has_perm ? formatNumber(c.perm_total_5yr) : '—', sub: c.has_perm ? 'PERM FY2021–2025' : 'No filings found', highlight: false },
           { label: 'Prevailing wage', value: formatSalary(c.prevailing_wage_avg), sub: 'DOL minimum', highlight: false },
         ].map(item => (
           <div key={item.label} style={{
@@ -186,11 +186,11 @@ export default async function CompanyPage({ params }: Props) {
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
               <span style={{ fontSize: 11, fontWeight: 500, background: '#EAF3DE', color: '#3B6D11', padding: '3px 8px', borderRadius: 5 }}>Active PERM sponsor</span>
-              <span style={{ fontSize: 11, color: '#9ca3af' }}>4-year data</span>
+              <span style={{ fontSize: 11, color: '#9ca3af' }}>5-year data</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
               {[
-                { label: 'Total filings', value: formatNumber(c.perm_total_4yr) },
+                { label: 'Total filings', value: formatNumber(c.perm_total_5yr) },
                 { label: 'Approval rate', value: `${permApprovalRate}%` },
                 { label: 'Avg PERM wage', value: formatSalary(c.perm_avg_wage) },
               ].map(item => (
@@ -201,12 +201,13 @@ export default async function CompanyPage({ params }: Props) {
               ))}
             </div>
             <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Annual filings</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6, marginBottom: 12 }}>
               {[
                 { yr: '2021', val: c.perm_fy2021 },
                 { yr: '2022', val: c.perm_fy2022 },
                 { yr: '2023', val: c.perm_fy2023 },
                 { yr: '2024', val: c.perm_fy2024 },
+                { yr: '2025', val: c.perm_fy2025 },
               ].map(item => (
                 <div key={item.yr} style={{ textAlign: 'center', padding: '8px', background: '#fafafa', borderRadius: 6, border: '0.5px solid #f3f4f6' }}>
                   <div style={{ fontSize: 10.5, color: '#9ca3af', marginBottom: 3 }}>{item.yr}</div>
