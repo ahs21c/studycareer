@@ -27,14 +27,14 @@ export default function Navbar() {
   }
 
   const links = [
-    { label: 'Companies',      href: '/search',               match: '/search' },
-    { label: 'Rankings',       href: '/rankings/top-100',      match: '/rankings' },
-    { label: 'Sectors',        href: '/sector',                match: '/sector' },
-    { label: 'Schools',        href: '/school',                match: '/school' },
-    { label: 'Cities',         href: '/city',                  match: '/city' },
-    { label: 'E2 Visa',        href: '/e2',                    match: '/e2' },
-    { label: 'Cap-Exempt',     href: '/cap-exempt',            match: '/cap-exempt' },
-    { label: 'Calculators',    href: '/calculator/real-income',match: '/calculator' },
+    { label: 'Companies',   href: '/search',                match: '/search' },
+    { label: 'Rankings',    href: '/rankings/top-100',       match: '/rankings' },
+    { label: 'Sectors',     href: '/sector',                 match: '/sector' },
+    { label: 'Schools',     href: '/school',                 match: '/school' },
+    { label: 'Cities',      href: '/city',                   match: '/city' },
+    { label: 'E2 Visa',     href: '/e2',                     match: '/e2' },
+    { label: 'Cap-Exempt',  href: '/cap-exempt',             match: '/cap-exempt' },
+    { label: 'Calculators', href: '/calculator/real-income', match: '/calculator' },
   ]
 
   return (
@@ -65,23 +65,12 @@ export default function Navbar() {
             <SearchBar />
           </div>
           {user ? (
-            <button
-              onClick={handleSignOut}
-              style={{ fontSize: 12, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
-            >
-              Sign out
-            </button>
-          ) : (
-            <Link href="/login" style={{
-              fontSize: 12.5, fontWeight: 500, color: '#fff',
-              background: '#185FA5', padding: '5px 14px', borderRadius: 6,
-              textDecoration: 'none', whiteSpace: 'nowrap',
-            }}>
-              Sign in
-            </Link>
-          )}
-        </div>
-      </div>
-    </nav>
-  )
-}
+            <>
+              <Link href="/bookmarks" style={{
+                fontSize: 12, color: '#6b7280', textDecoration: 'none', whiteSpace: 'nowrap'
+              }}>
+                ★ Saved
+              </Link>
+              <button
+                onClick={handleSignOut}
+                style={{ fontSize: 12, color: '#6b7280', bac
