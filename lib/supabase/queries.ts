@@ -219,7 +219,6 @@ export async function searchSchools(query: string) {
     university_std: name,
     perm_total: v.perm_total,
     avg_wage: v.wage_count > 0 ? Math.round(v.wage_sum / v.wage_count) : null,
-    // slug: university_std를 URL-safe 문자열로 변환 (getSchoolDetail과 동일 로직)
     slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   })).sort((a, b) => b.perm_total - a.perm_total)
 }
@@ -227,7 +226,6 @@ export async function searchSchools(query: string) {
 export async function getSchoolDetail(slug: string) {
   const supabase = createClient()
  
-  // slug → 학교명 검색 패턴으로 변환 (하이픈을 공백으로)
   const namePattern = slug.replace(/-/g, ' ')
  
   const { data } = await supabase
@@ -241,7 +239,6 @@ export async function getSchoolDetail(slug: string) {
  
   const school_name = data[0].university_std
  
-  // 고용기업 집계
   const employerMap: Record<string, number> = {}
   for (const row of data) {
     if (row.employer_std) {
@@ -253,7 +250,6 @@ export async function getSchoolDetail(slug: string) {
     .slice(0, 8)
     .map(([name]) => name)
  
-  // 전공 집계
   const majorMap: Record<string, number> = {}
   for (const row of data) {
     if (row.top_major) {
@@ -265,7 +261,6 @@ export async function getSchoolDetail(slug: string) {
     .slice(0, 6)
     .map(([name]) => name)
  
-  // 학위 집계
   const degreeMap: Record<string, number> = {}
   for (const row of data) {
     if (row.top_degree) {
@@ -277,10 +272,8 @@ export async function getSchoolDetail(slug: string) {
     .slice(0, 4)
     .map(([name]) => name)
  
-  // PERM 합산
   const perm_count = data.reduce((sum, r) => sum + r.perm_count, 0)
  
-  // 평균 임금
   const wageRows = data.filter(r => r.avg_annual_wage)
   const avg_wage = wageRows.length > 0
     ? Math.round(wageRows.reduce((sum, r) => sum + r.avg_annual_wage, 0) / wageRows.length)
