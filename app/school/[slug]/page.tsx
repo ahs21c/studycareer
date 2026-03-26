@@ -25,7 +25,7 @@ function GreaterThanList({ items, color }: { items: string[]; color: string }) {
 
 export default async function SchoolDetailPage({ params }: { params: { slug: string } }) {
   const school = await getSchoolDetail(params.slug)
-  if (!school) notFound()
+  if (!school) return <div>School not found: {params.slug}</div>
 
   const employers: string[] = school.top_employers ?? []
   const majorsDetail: string[] = school.top_majors_detail ?? []
