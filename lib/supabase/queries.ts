@@ -169,16 +169,21 @@ export async function searchSchools(query: string) {
  
 export async function getSchoolDetail(slug: string) {
   if (!slug) return null
-  const supabase = createClient()
- 
+  
+  const { createClient: createSupabaseClient } = await import('@supabase/supabase-js')
+  const supabase = createSupabaseClient(
+    'https://lngwlhggdtwcvwaggidv.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuZ3dsaGdnZHR3Y3Z3YWdnaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDQxODIsImV4cCI6MjA4OTkyMDE4Mn0.RK1oYTB2N9vg37wa6RcD_GBPse0b92b9tvngEexDvx8'
+  )
+
   const { data } = await supabase
     .from('school_details')
     .select('*')
     .eq('slug', slug)
     .single()
- 
+
   if (!data) return null
- 
+
   return {
     school_name: data.school_name,
     perm_count: data.perm_count,
