@@ -1,8 +1,5 @@
 import { getSchoolDetail } from '@/lib/supabase/queries'
-import { notFound } from 'next/navigation'
 import Link from 'next/link'
-
-export const revalidate = 2592000
 
 function toTitle(s: string) {
   return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
@@ -25,7 +22,8 @@ function GreaterThanList({ items, color }: { items: string[]; color: string }) {
 
 export default async function SchoolDetailPage({ params }: { params: { slug: string } }) {
   const school = await getSchoolDetail(params.slug)
-  if (!school) return <div>School not found: {params.slug}</div>
+
+  if (!school) return <div style={{ fontSize: 13, color: '#6b7280' }}>School not found.</div>
 
   const employers: string[] = school.top_employers ?? []
   const majorsDetail: string[] = school.top_majors_detail ?? []
@@ -93,7 +91,7 @@ export default async function SchoolDetailPage({ params }: { params: { slug: str
       </div>
 
       <div style={{ padding: '12px 14px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 8, fontSize: 11, color: '#9ca3af', lineHeight: 1.65 }}>
-        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 certified cases only. Trends shown by relative frequency, not absolute counts.
+        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 certified cases only.
       </div>
     </div>
   )
