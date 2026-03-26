@@ -1,8 +1,8 @@
-
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getCompanyBySlug } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
+import BookmarkButton from '@/components/company/BookmarkButton'
 
 export const revalidate = 604800
 
@@ -88,9 +88,12 @@ export default async function CompanyPage({ params }: Props) {
               {SECTOR_LABELS[c.sector] ?? c.sector} · {c.employer_state}
             </div>
           </div>
-          <span style={{ fontSize: 11, fontWeight: 500, background: t.bg, color: t.text, padding: '4px 10px', borderRadius: 6 }}>
-            {t.label}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <BookmarkButton slug={c.slug} employerName={c.employer_name} />
+            <span style={{ fontSize: 11, fontWeight: 500, background: t.bg, color: t.text, padding: '4px 10px', borderRadius: 6 }}>
+              {t.label}
+            </span>
+          </div>
         </div>
       </div>
 
