@@ -16,6 +16,7 @@ const links = [
   { label: 'Cap-Exempt',     href: '/cap-exempt',       match: '/cap-exempt' },
   { label: 'Calculators',    href: '/calculator/real-income', match: '/calculator' },
   { label: 'Blog',           href: '/blog',             match: '/blog' },
+  { label: 'E2 Visa', href: '/e2', match: '/e2' },
 ]
 
   return (
