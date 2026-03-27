@@ -229,7 +229,7 @@ export default async function CompanyPage({ params }: Props) {
           {topSchools.map((s, i) => {
             const schoolSlug = s.university_std.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
             return (
-              
+              <a
                 key={i}
                 href={'/school/' + schoolSlug}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: '0.5px solid #f3f4f6', textDecoration: 'none', color: 'inherit' }}
