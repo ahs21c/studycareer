@@ -75,7 +75,7 @@ export default function SchoolDetailPage() {
           {toTitle(school.school_name)}
         </h1>
         <p style={{ fontSize: 13, color: '#6b7280' }}>
-          Where do graduates get hired? · PERM data FY2021–2024
+          Where do graduates get hired? · Certified PERM data FY2021–2024
         </p>
       </div>
 
@@ -83,7 +83,7 @@ export default function SchoolDetailPage() {
         <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
           <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>PERM filings</div>
           <div style={{ fontSize: 18, fontWeight: 500 }}>{school.perm_count?.toLocaleString()}</div>
-          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>FY2021–2024</div>
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>Certified cases · FY2021–2024</div>
         </div>
         <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
           <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Median wage</div>
