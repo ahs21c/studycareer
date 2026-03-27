@@ -28,18 +28,11 @@ function EmployerList({ items }: { items: string[] }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4 }}>
       {items.map((item, i) => {
-        const slug = item.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
+        const empSlug = item.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
         return (
           <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            
-              href={'/company/' + slug}
-              style={{ fontSize: 12.5, color: '#185FA5', textDecoration: 'none' }}
-            >
-              {toTitle(item)}
-            </a>
-            {i < items.length - 1 && (
-              <span style={{ fontSize: 12, color: '#185FA5', fontWeight: 600 }}>›</span>
-            )}
+            <a href={'/company/' + empSlug} style={{ fontSize: 12.5, color: '#185FA5', textDecoration: 'none' }}>{toTitle(item)}</a>
+            {i < items.length - 1 && <span style={{ fontSize: 12, color: '#185FA5', fontWeight: 600 }}>›</span>}
           </span>
         )
       })}
