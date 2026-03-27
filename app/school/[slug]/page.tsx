@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { getSchoolDetail } from '@/lib/supabase/queries'
 
 function toTitle(s: string) {
-  return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  return s.toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())
 }
 
 function GreaterThanList({ items, color }: { items: string[]; color: string }) {
@@ -20,6 +20,29 @@ function GreaterThanList({ items, color }: { items: string[]; color: string }) {
           )}
         </span>
       ))}
+    </div>
+  )
+}
+
+function EmployerList({ items }: { items: string[] }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4 }}>
+      {items.map((item, i) => {
+        const slug = item.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
+        return (
+          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            
+              href={'/company/' + slug}
+              style={{ fontSize: 12.5, color: '#185FA5', textDecoration: 'none' }}
+            >
+              {toTitle(item)}
+            </a>
+            {i < items.length - 1 && (
+              <span style={{ fontSize: 12, color: '#185FA5', fontWeight: 600 }}>›</span>
+            )}
+          </span>
+        )
+      })}
     </div>
   )
 }
@@ -63,6 +86,21 @@ export default function SchoolDetailPage() {
         </p>
       </div>
 
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 20 }}>
+        <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
+          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>PERM filings</div>
+          <div style={{ fontSize: 18, fontWeight: 500 }}>{school.perm_count?.toLocaleString()}</div>
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>FY2021–2024</div>
+        </div>
+        <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
+          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Median wage</div>
+          <div style={{ fontSize: 18, fontWeight: 500 }}>
+            {school.avg_wage ? `$${Math.round(school.avg_wage / 1000)}K` : '—'}
+          </div>
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>offered at PERM filing</div>
+        </div>
+      </div>
+
       <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>
           Hiring background
@@ -71,7 +109,7 @@ export default function SchoolDetailPage() {
           {employers.length > 0 && (
             <div>
               <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 6 }}>Top employers</div>
-              <GreaterThanList items={employers} color="#185FA5" />
+              <EmployerList items={employers} />
             </div>
           )}
           <div style={{ borderTop: '0.5px solid #f3f4f6' }} />
@@ -92,7 +130,7 @@ export default function SchoolDetailPage() {
       </div>
 
       <div style={{ padding: '12px 14px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 8, fontSize: 11, color: '#9ca3af', lineHeight: 1.65 }}>
-        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 certified cases only.
+        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 certified cases only. Trends shown by relative frequency, not absolute counts.
       </div>
     </div>
   )
