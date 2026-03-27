@@ -70,7 +70,6 @@ export default async function CompanyPage({ params }: Props) {
 
   return (
     <div>
-      {/* Breadcrumb + Header */}
       <div style={{ paddingBottom: 20, borderBottom: '0.5px solid #e5e7eb', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#9ca3af', marginBottom: 12 }}>
           <a href="/" style={{ color: '#9ca3af' }}>Home</a>
@@ -99,7 +98,6 @@ export default async function CompanyPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: 16 }}>
         {[
           { label: 'H1B filings (2yr)', value: formatNumber(c.lca_total_2yr), sub: `${yoy >= 0 ? '+' : ''}${yoy}% vs FY2024`, highlight: true },
@@ -119,17 +117,14 @@ export default async function CompanyPage({ params }: Props) {
         ))}
       </div>
 
-      {/* Dual sponsorship callout */}
       {c.has_perm && (
         <div style={{ padding: '12px 14px', background: '#EAF3DE', border: '0.5px solid #b6daa0', borderRadius: 8, marginBottom: 16, fontSize: 12.5, color: '#2d5a1b' }}>
-          ✓ This company sponsors both H1B work visas and PERM green cards. Dual sponsorship significantly reduces long-term immigration risk.
+          This company sponsors both H1B work visas and PERM green cards. Dual sponsorship significantly reduces long-term immigration risk.
         </div>
       )}
 
-      {/* H1B Activity */}
       <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>H1B activity</div>
-
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Salary distribution (FY2025)</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6 }}>
@@ -152,7 +147,6 @@ export default async function CompanyPage({ params }: Props) {
             </div>
           )}
         </div>
-
         {topJobs.length > 0 && (
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Top job titles</div>
@@ -164,7 +158,6 @@ export default async function CompanyPage({ params }: Props) {
             ))}
           </div>
         )}
-
         {topStates.length > 0 && (
           <div>
             <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Work locations</div>
@@ -179,16 +172,14 @@ export default async function CompanyPage({ params }: Props) {
         )}
       </div>
 
-      {/* Green Card Section */}
       <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 14 }}>Green card sponsorship</div>
-
         {!c.has_perm ? (
           <div style={{ fontSize: 12.5, color: '#6b7280', lineHeight: 1.6 }}>
-            No PERM green card filings found for this employer name. The company may file under a different legal entity — check parent group affiliates.
+            No PERM green card filings found for this employer name. The company may file under a different legal entity.
           </div>
         ) : (
-          <>
+          <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
               <span style={{ fontSize: 11, fontWeight: 500, background: '#EAF3DE', color: '#3B6D11', padding: '3px 8px', borderRadius: 5 }}>Active PERM sponsor</span>
               <span style={{ fontSize: 11, color: '#9ca3af' }}>5-year data</span>
@@ -196,7 +187,7 @@ export default async function CompanyPage({ params }: Props) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
               {[
                 { label: 'Total filings', value: formatNumber(c.perm_total_5yr) },
-                { label: 'Approval rate', value: `${permApprovalRate}%` },
+                { label: 'Approval rate', value: permApprovalRate + '%' },
                 { label: 'Avg PERM wage', value: formatSalary(c.perm_avg_wage) },
               ].map(item => (
                 <div key={item.label} style={{ textAlign: 'center', padding: '10px', background: '#fafafa', borderRadius: 8, border: '0.5px solid #f3f4f6' }}>
@@ -221,13 +212,12 @@ export default async function CompanyPage({ params }: Props) {
               ))}
             </div>
             <div style={{ padding: '8px 12px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 7, fontSize: 11, color: '#9ca3af', lineHeight: 1.5 }}>
-              PERM data is based on the exact legal entity name as filed with the U.S. Department of Labor. Companies that changed their legal name may show incomplete historical data.
+              PERM data is based on the exact legal entity name as filed with the U.S. Department of Labor.
             </div>
-          </>
+          </div>
         )}
       </div>
 
-      {/* Top Hiring Schools */}
       {topSchools.length > 0 && (
         <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
           <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 6 }}>
@@ -239,8 +229,6 @@ export default async function CompanyPage({ params }: Props) {
           {topSchools.map((s, i) => {
             const schoolSlug = s.university_std.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
             return (
-              
-                return (
               
                 key={i}
                 href={'/school/' + schoolSlug}
@@ -273,7 +261,7 @@ export default async function CompanyPage({ params }: Props) {
       )}
 
       <div style={{ padding: '12px 14px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 8, fontSize: 11.5, color: '#6b7280', lineHeight: 1.65 }}>
-        Green card wait time varies by nationality: Korea · EU — 1-5 yr · China — 20-50 yr · India — 100+ yr. India/China nationals should consider Canada as a parallel track.
+        Green card wait time varies by nationality: Korea / EU — 1-5 yr · China — 20-50 yr · India — 100+ yr. India/China nationals should consider Canada as a parallel track.
       </div>
     </div>
   )
