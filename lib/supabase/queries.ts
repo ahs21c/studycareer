@@ -251,3 +251,14 @@ export async function getSectorCompanies(sector: string) {
     .limit(50)
   return data ?? []
 }
+
+export async function getTopSchoolsByCompany(employerName: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('school_pipelines')
+    .select('university_std, perm_count, avg_annual_wage, top_major')
+    .eq('employer_std', employerName.toUpperCase())
+    .order('perm_count', { ascending: false })
+    .limit(5)
+  return data ?? []
+}

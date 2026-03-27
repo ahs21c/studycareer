@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getCompanyBySlug } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
 import BookmarkButton from '@/components/company/BookmarkButton'
+import { getCompanyBySlug, getTopSchoolsByCompany } from '@/lib/supabase/queries'
 
 export const revalidate = 604800
 
@@ -52,6 +52,8 @@ export default async function CompanyPage({ params }: Props) {
   const { slug } = await params
   const c = await getCompanyBySlug(slug)
   if (!c) notFound()
+
+  const topSchools = await getTopSchoolsByCompany(c.employer_name)
 
   const t = TREND_STYLE[c.lca_trend] ?? TREND_STYLE.STABLE
   const yoy = c.lca_fy2024 > 0
@@ -224,6 +226,49 @@ export default async function CompanyPage({ params }: Props) {
           </>
         )}
       </div>
+
+      {/* Top Hiring Schools */}
+      {topSchools.length > 0 && (
+        <div style={{ padding: '14px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 6 }}>
+            Top hiring schools
+          </div>
+          <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 12 }}>
+            Universities most represented in PERM filings · FY2021–2024
+          </div>
+          {topSchools.map((s, i) => {
+            const schoolSlug = s.university_std.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
+            return (
+              
+                key={i}
+                href={`/school/${schoolSlug}`}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: '0.5px solid #f3f4f6', textDecoration: 'none', color: 'inherit' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 10.5, color: '#9ca3af', width: 14 }}>{i + 1}</span>
+                  <div>
+                    <div style={{ fontSize: 12, color: '#1a1a1a' }}>
+                      {s.university_std.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                    </div>
+                    {s.top_major && (
+                      <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
+                    )}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: 11.5, fontWeight: 500, color: '#1a1a1a' }}>{s.perm_count} cases</div>
+                  {s.avg_annual_wage && (
+                    <div style={{ fontSize: 10.5, color: '#9ca3af' }}>${Math.round(s.avg_annual_wage).toLocaleString()} avg</div>
+                  )}
+                </div>
+              </a>
+            )
+          })}
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 10, lineHeight: 1.5 }}>
+            Based on PERM green card filings. Reflects universities where employees obtained degrees before sponsorship.
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: '12px 14px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 8, fontSize: 11.5, color: '#6b7280', lineHeight: 1.65 }}>
         Green card wait time varies by nationality: Korea · EU — 1-5 yr · China — 20-50 yr · India — 100+ yr. India/China nationals should consider Canada as a parallel track.
