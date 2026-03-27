@@ -224,7 +224,7 @@ export default async function CompanyPage({ params }: Props) {
             Top hiring schools
           </div>
           <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 12 }}>
-            Universities most represented in PERM filings · FY2021–2024
+            Universities most represented in PERM green card filings · FY2021–20244
           </div>
           {topSchools.map((s, i) => {
             const schoolSlug = s.university_std.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
@@ -240,7 +240,7 @@ export default async function CompanyPage({ params }: Props) {
                     <div style={{ fontSize: 12, color: '#1a1a1a' }}>
                       {s.university_std.toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
                     </div>
-                    {s.top_major && (
+                    {s.top_major 
                       <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
                     )}
                   </div>

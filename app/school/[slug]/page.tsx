@@ -75,7 +75,7 @@ export default function SchoolDetailPage() {
           {toTitle(school.school_name)}
         </h1>
         <p style={{ fontSize: 13, color: '#6b7280' }}>
-          Where do graduates get hired? · Certified PERM data FY2021–2024
+          Where do graduates get hired? · PERM data FY2021–2024
         </p>
       </div>
 
