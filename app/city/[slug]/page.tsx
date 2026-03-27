@@ -239,7 +239,7 @@ export default async function CompanyPage({ params }: Props) {
                   <span style={{ fontSize: 10.5, color: '#9ca3af', width: 14 }}>{i + 1}</span>
                   <div>
                     <div style={{ fontSize: 12, color: '#1a1a1a' }}>
-                      {s.university_std.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                      {s.university_std.toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
                     </div>
                     {s.top_major && (
                       <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
