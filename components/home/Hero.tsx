@@ -31,7 +31,7 @@ export default function Hero() {
         H1B &amp; green card data<br />for <em style={{ fontStyle: 'normal', color: '#185FA5' }}>every</em> US employer
       </h1>
 
-      <p style={{ fontSize: 13, color: '#6b7280', maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
+      <p style={{ fontSize: 15, color: '#374151', fontWeight: 600, maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
         Study. Career. Life. — All connected.
       </p>
 
@@ -41,7 +41,7 @@ export default function Hero() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, maxWidth: 500, margin: '20px auto 0' }}>
         <div style={{ flex: 1, height: '0.5px', background: '#e5e7eb' }} />
-        <span style={{ fontSize: 13, color: '#9ca3af', whiteSpace: 'nowrap' }}>Find by nationality</span>
+        <span style={{ fontSize: 13, color: '#9ca3af', fontWeight: 600, whiteSpace: 'nowrap' }}>Find by nationality</span>
         <div style={{ flex: 1, height: '0.5px', background: '#e5e7eb' }} />
       </div>
 
