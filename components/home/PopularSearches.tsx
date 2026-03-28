@@ -82,7 +82,7 @@ export default async function PopularSearches() {
           </Link>
         </div>
 
-        {/* Top universities */}
+        {/* Green Card by University */}
         <div>
           <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 10 }}>
             Top universities
@@ -99,7 +99,7 @@ export default async function PopularSearches() {
             </Link>
           ))}
           <Link href="/school" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
-            View all universities →
+            View all schools →
           </Link>
         </div>
       </div>
