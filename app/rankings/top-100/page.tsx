@@ -52,7 +52,8 @@ export default async function Top100Page() {
           <span style={{ color: '#6b7280' }}>Top H1B sponsors</span>
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 4 }}>Top H1B sponsors</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>Ranked by total LCA filings · FY2024-2025 · {companies.length} companies</p>
+        <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>Ranked by total LCA filings · FY2024-2025 · {companies.length} companies</p>
+        <SearchBar placeholder="Search 94,623 companies..." />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 80px 80px 40px', gap: 12, padding: '0 12px 8px', fontSize: 10.5, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em' }}>
