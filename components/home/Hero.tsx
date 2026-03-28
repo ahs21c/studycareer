@@ -27,12 +27,12 @@ export default function Hero() {
         FY2025 data · 94,623 companies
       </div>
 
-      <h1 style={{ fontSize: 32, fontWeight: 700, lineHeight: 1.3, letterSpacing: '-.4px', marginBottom: 10 }}>
-        H1B &amp; green card data<br />for <em style={{ fontStyle: 'normal', color: '#185FA5' }}>every</em> US employer
+      <h1 style={{ fontSize: 36, fontWeight: 700, lineHeight: 1.3, letterSpacing: '-.4px', marginBottom: 10 }}>
+        Study. Career. Life.<br />— All <em style={{ fontStyle: 'normal', color: '#185FA5' }}>connected</em>.
       </h1>
 
       <p style={{ fontSize: 15, color: '#374151', fontWeight: 600, maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
-        Study. Career. Life. — All connected.
+        Universities · Working Visas · Green Cards
       </p>
 
       <div style={{ maxWidth: 500, margin: '0 auto' }}>
