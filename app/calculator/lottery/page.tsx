@@ -99,10 +99,10 @@ export default function LotteryPage() {
           <span>&rsaquo;</span>
           <span style={{ color: '#6b7280' }}>H1B lottery calculator</span>
         </div>
-        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 6 }}>H1B lottery calculator</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-.4px', marginBottom: 6 }}>H1B lottery calculator <span style={{ fontSize: 13, fontWeight: 600, color: '#dc2626', background: '#fef2f2', padding: '2px 8px', borderRadius: 4, marginLeft: 6 }}>Inc. AI IMPACT</span></h1>
         <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 10 }}>Estimate your FY2027+ selection odds under the wage-weighted lottery system.</p>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EAF3DE', border: '0.5px solid #b6daa0', borderRadius: 6, padding: '5px 12px', fontSize: 11.5, color: '#2d5a1b', fontWeight: 500 }}>
-          ✦ AI labor market impact factored in — based on research from global educational institutions and professional agencies.
+          ✦ AI labor market impact factored in — based on research from 11 renowned institutions.
         </div>
       </div>
 
@@ -136,10 +136,10 @@ export default function LotteryPage() {
             <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>OPT status</div>
             <select value={yearsOPT} onChange={e => setYearsOPT(Number(e.target.value))}
               style={{ width: '100%', fontSize: 12.5, border: '0.5px solid #e5e7eb', borderRadius: 7, padding: '7px 10px', background: '#fff', color: '#1a1a1a', outline: 'none' }}>
-             <option value={0}>Not on OPT / abroad</option>
-             <option value={1}>Regular OPT (2 attempts)</option>
-             <option value={2}>STEM OPT year 1 (3 attempts)</option>
-             <option value={3}>Full STEM OPT (3 attempts)</option>
+              <option value={0}>Not on OPT / abroad</option>
+              <option value={1}>Regular OPT (2 attempts)</option>
+              <option value={2}>STEM OPT year 1 (3 attempts)</option>
+              <option value={3}>Full STEM OPT (3 attempts)</option>
             </select>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function LotteryPage() {
 
       <div style={{ padding: '12px 16px', border: '0.5px solid #e5e7eb', borderRadius: 10, marginBottom: 16 }}>
         <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
-          How competitive is this year's lottery? <span style={{ color: '#1a1a1a', textTransform: 'none', fontWeight: 600 }}>{baseRate}%</span>
+          Overall H1B selection rate (adjustable) <span style={{ color: '#1a1a1a', textTransform: 'none', fontWeight: 600 }}>{baseRate}%</span>
           <span style={{ fontWeight: 400, marginLeft: 8 }}>
             {baseRate >= 33 ? '(FY2026 est. ~35%)' : baseRate >= 23 ? '(FY2027 est. ~25%)' : '(conservative)'}
           </span>
@@ -162,7 +162,7 @@ export default function LotteryPage() {
           <span>45%</span>
         </div>
         <div style={{ padding: '10px 12px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 7, fontSize: 11, color: '#6b7280', lineHeight: 1.65 }}>
-          <strong style={{ fontWeight: 500, color: '#1a1a1a' }}>How this rate is estimated:</strong> Based on (1) USCIS historical data — FY2026 saw 343,981 registrations, down 27% YoY, pushing actual selection to ~35%; (2) AI displacement research from 11 institutions (Goldman Sachs, McKinsey, MIT, Oxford, etc.) projecting shifts in H1B-eligible tech roles; (3) proposed FY2027 wage-weighted rules changing applicant composition. Adjust the slider to model different scenarios.
+          <strong style={{ fontWeight: 500, color: '#1a1a1a' }}>How this rate is estimated:</strong> Based on (1) USCIS historical data — FY2026 saw 343,981 registrations, down 27% YoY, pushing actual selection to ~35%; (2) AI displacement research from 11 renowned institutions projecting shifts in H1B-eligible tech roles; (3) proposed FY2027 wage-weighted rules changing applicant composition. Adjust the slider to model different scenarios.
         </div>
       </div>
 
