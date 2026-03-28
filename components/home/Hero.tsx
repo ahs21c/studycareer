@@ -12,10 +12,7 @@ export default function Hero() {
         <span style={{ fontSize: 16, color: '#3B6D11' }}>Universities, Working Visas, Green Cards - in one place </span>
       </h1>
 
-      <p style={{ fontSize: 13, color: '#6b7280', maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
-        Cross-referencing DOL filings, PERM sponsorship records, and salary benchmarks — in one place.
-      </p>
-
+      
       <div style={{ maxWidth: 500, margin: '0 auto' }}>
         <SearchBar large />
       </div>
