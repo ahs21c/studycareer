@@ -38,10 +38,10 @@ export default async function PopularSearches() {
         <h2 style={{ fontSize: 14, fontWeight: 500 }}>Popular searches</h2>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-        {/* Top H1B Sponsors */}
+        {/* Top H1B sponsors */}
         <div>
           <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 10 }}>
-            Top H1B Sponsors
+            Top H1B sponsors
           </div>
           {companies.map((c, i) => (
             <Link key={c.slug} href={`/company/${c.slug}`} style={{ display: 'block', textDecoration: 'none' }}>
@@ -59,7 +59,7 @@ export default async function PopularSearches() {
             </Link>
           ))}
           <Link href="/rankings/top-100" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
-            View all top H1B Sponsors →
+            View all H1B sponsors →
           </Link>
         </div>
 
