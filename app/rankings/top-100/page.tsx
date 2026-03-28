@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTopCompanies } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
+import SearchBar from '@/components/layout/SearchBar'
 
 export const metadata: Metadata = {
   title: 'Top 100 H1B Sponsor Companies | FY2024-2025',
