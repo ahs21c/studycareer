@@ -2,7 +2,6 @@
 
 import SearchBar from '@/components/layout/SearchBar'
 
-const HINTS = ['Google', 'Software Engineer', 'California', 'Amazon', 'Data Scientist']
 
 export default function Hero() {
   return (
@@ -17,17 +16,6 @@ export default function Hero() {
         <SearchBar large />
       </div>
 
-      <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 12, flexWrap: 'wrap' }}>
-        {HINTS.map(hint => (
-          <span key={hint} style={{
-            fontSize: 11, color: '#6b7280',
-            background: '#f9fafb', border: '0.5px solid #e5e7eb',
-            padding: '3px 9px', borderRadius: 12, cursor: 'pointer',
-          }}>
-            {hint}
-          </span>
-        ))}
-      </div>
     </section>
   )
 }
