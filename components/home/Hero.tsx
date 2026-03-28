@@ -8,7 +8,8 @@ export default function Hero() {
   return (
     <section style={{ textAlign: 'center', padding: '44px 0 36px' }}>
       <h1 style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.3, letterSpacing: '-.4px', marginBottom: 10 }}>
-        H1B &amp; green card data<br />for <em style={{ fontStyle: 'normal', color: '#185FA5' }}>every</em> US employer
+        Study. Career. Life. — All connected.<br />
+        <span style={{ color: '#185FA5' }}>Universities, Working Visas, Green Cards</span>
       </h1>
 
       <p style={{ fontSize: 13, color: '#6b7280', maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
