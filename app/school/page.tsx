@@ -45,8 +45,8 @@ function SchoolSearch() {
     function handleClick(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setDropOpen(false)
     }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('mouseup', handleClick)
+    return () => document.removeEventListener('mouseup', handleClick)
   }, [])
 
   const POPULAR = [
