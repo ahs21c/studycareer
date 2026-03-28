@@ -32,7 +32,7 @@ export default function Hero() {
       </h1>
 
       <p style={{ fontSize: 13, color: '#6b7280', maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
-        Cross-referencing DOL filings, PERM sponsorship records, and salary benchmarks — in one place.
+        Study. Career. Life. — All connected.
       </p>
 
       <div style={{ maxWidth: 500, margin: '0 auto' }}>
@@ -41,7 +41,7 @@ export default function Hero() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, maxWidth: 500, margin: '20px auto 0' }}>
         <div style={{ flex: 1, height: '0.5px', background: '#e5e7eb' }} />
-        <span style={{ fontSize: 11, color: '#9ca3af', whiteSpace: 'nowrap' }}>or find by nationality</span>
+        <span style={{ fontSize: 13, color: '#9ca3af', whiteSpace: 'nowrap' }}>Find by nationality</span>
         <div style={{ flex: 1, height: '0.5px', background: '#e5e7eb' }} />
       </div>
 
