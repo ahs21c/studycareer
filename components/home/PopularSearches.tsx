@@ -1,23 +1,16 @@
 import Link from 'next/link'
-import { getTopCompanies, getH1BByState } from '@/lib/supabase/queries'
+import { getTopCompanies, getH1BByIndustry, getTopSchools } from '@/lib/supabase/queries'
 import { formatSalary } from '@/lib/utils'
 
 function toTitle(s: string) {
   return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
 }
 
-const TOP_JOBS = [
-  { title: 'Software Developer', avg_salary: 142000 },
-  { title: 'Software Engineer', avg_salary: 148000 },
-  { title: 'Data Scientist', avg_salary: 152000 },
-  { title: 'Systems Engineer', avg_salary: 128000 },
-  { title: 'Business Analyst', avg_salary: 105000 },
-]
-
 export default async function PopularSearches() {
-  const [companies, states] = await Promise.all([
+  const [companies, industries, schools] = await Promise.all([
     getTopCompanies(5),
-    getH1BByState(),
+    getH1BByIndustry(),
+    getTopSchools(),
   ])
 
   return (
@@ -52,33 +45,41 @@ export default async function PopularSearches() {
           </Link>
         </div>
 
-        {/* Top jobs */}
+        {/* H1B by industry */}
         <div>
           <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 10 }}>
-            Top job titles
+            H1B by industry
           </div>
-          {TOP_JOBS.map(j => (
-            <div key={j.title} className="sc-row">
-              <span style={{ fontSize: 12, fontWeight: 500 }}>{j.title}</span>
-              <span style={{ fontSize: 11, color: '#9ca3af' }}>{formatSalary(j.avg_salary)} avg</span>
+          {industries.slice(0, 5).map((ind, i) => (
+            <div key={ind.industry} className="sc-row">
+              <span style={{ fontSize: 10, color: '#9ca3af', width: 14, flexShrink: 0 }}>{i + 1}</span>
+              <span style={{ fontSize: 12, fontWeight: 500, flex: 1, paddingLeft: 6 }}>{ind.industry}</span>
+              <span style={{ fontSize: 11, color: '#9ca3af' }}>{ind.approvals.toLocaleString()}</span>
             </div>
           ))}
+          <Link href="/rankings/by-industry" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
+            View all industries →
+          </Link>
         </div>
 
-        {/* Top states */}
+        {/* Top universities */}
         <div>
           <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 10 }}>
-            Top states
+            Top universities
           </div>
-          {states.slice(0, 5).map((s, i) => (
-            <div key={s.state} className="sc-row">
-              <span style={{ fontSize: 10, color: '#9ca3af', width: 14, flexShrink: 0 }}>{i + 1}</span>
-              <span style={{ fontSize: 12, fontWeight: 500, flex: 1, paddingLeft: 6 }}>{s.state}</span>
-              <span style={{ fontSize: 11, color: '#9ca3af' }}>{s.approvals.toLocaleString()}</span>
-            </div>
+          {schools.slice(0, 5).map((s, i) => (
+            <Link key={s.slug} href={`/school/${s.slug}`} style={{ display: 'block', textDecoration: 'none' }}>
+              <div className="sc-row">
+                <span style={{ fontSize: 10, color: '#9ca3af', width: 14, flexShrink: 0 }}>{i + 1}</span>
+                <span style={{ fontSize: 12, fontWeight: 500, flex: 1, paddingLeft: 6, color: '#1a1a1a' }}>
+                  {s.university_std}
+                </span>
+                <span style={{ fontSize: 11, color: '#9ca3af' }}>{s.perm_count.toLocaleString()}</span>
+              </div>
+            </Link>
           ))}
-          <Link href="/rankings/by-state" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
-            View all states →
+          <Link href="/school" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
+            View all universities →
           </Link>
         </div>
 
