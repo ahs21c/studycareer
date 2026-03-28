@@ -85,7 +85,7 @@ export default async function PopularSearches() {
         {/* Green Card by University */}
         <div>
           <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 10 }}>
-            Top universities
+            Green Card by University
           </div>
           {usSchools.map((s, i) => (
             <Link key={s.slug} href={`/school/${s.slug}`} style={{ display: 'block', textDecoration: 'none' }}>
