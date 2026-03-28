@@ -5,6 +5,7 @@ import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { searchCompanies } from '@/lib/supabase/queries'
 import { formatNumber, formatSalary } from '@/lib/utils'
+import SearchBar from '@/components/layout/SearchBar'
 
 const SECTOR_LABELS: Record<string, string> = {
   IT_SERVICES: 'IT Services',
@@ -61,28 +62,9 @@ function SearchResults() {
         <p style={{ fontSize: 13, color: '#6b7280' }}>Search 93,955 companies by H1B filings and green card sponsorship.</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
-        <div style={{ position: 'relative', maxWidth: 520 }}>
-          <input
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Search any company..."
-            style={{
-              width: '100%', padding: '10px 100px 10px 14px',
-              border: '0.5px solid #d1d5db', borderRadius: 10,
-              fontSize: 13, outline: 'none', color: '#1a1a1a',
-            }}
-          />
-          <button type="submit" style={{
-            position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)',
-            background: '#185FA5', color: '#fff', border: 'none',
-            borderRadius: 7, padding: '7px 14px', fontSize: 12, fontWeight: 500, cursor: 'pointer',
-          }}>
-            Search
-          </button>
-        </div>
-      </form>
+      <div style={{ marginBottom: 24, maxWidth: 520 }}>
+        <SearchBar large placeholder="Search any company..." />
+      </div>
 
       {loading && <div style={{ fontSize: 13, color: '#9ca3af' }}>Searching...</div>}
 
