@@ -27,7 +27,7 @@ export default function Hero() {
         FY2025 data · 94,623 companies
       </div>
 
-      <h1 style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.3, letterSpacing: '-.4px', marginBottom: 10 }}>
+      <h1 style={{ fontSize: 32, fontWeight: 700, lineHeight: 1.3, letterSpacing: '-.4px', marginBottom: 10 }}>
         H1B &amp; green card data<br />for <em style={{ fontStyle: 'normal', color: '#185FA5' }}>every</em> US employer
       </h1>
 
