@@ -240,9 +240,9 @@ export default async function CompanyPage({ params }: Props) {
                     <div style={{ fontSize: 12, color: '#1a1a1a' }}>
                       {s.university_std.toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
                     </div>
-                    {s.top_major 
-                      <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
-                    )}
+                    {s.top_major && (
+                <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
+                  )}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
