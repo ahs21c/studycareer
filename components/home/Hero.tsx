@@ -9,7 +9,7 @@ export default function Hero() {
     <section style={{ textAlign: 'center', padding: '44px 0 36px' }}>
       <h1 style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.3, letterSpacing: '-.4px', marginBottom: 10 }}>
         Study. Career. Life. — All connected.<br />
-        <span style={{ color: '#185FA5' }}>Universities, Working Visas, Green Cards</span>
+        <span style={{ fontSize: 16, color: '#3B6D11' }}>Universities, Working Visas, Green Cards - in one place </span>
       </h1>
 
       <p style={{ fontSize: 13, color: '#6b7280', maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.65 }}>
