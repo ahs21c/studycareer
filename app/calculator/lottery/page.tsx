@@ -133,13 +133,13 @@ export default function LotteryPage() {
             </select>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>OPT years remaining</div>
+            <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>OPT status</div>
             <select value={yearsOPT} onChange={e => setYearsOPT(Number(e.target.value))}
               style={{ width: '100%', fontSize: 12.5, border: '0.5px solid #e5e7eb', borderRadius: 7, padding: '7px 10px', background: '#fff', color: '#1a1a1a', outline: 'none' }}>
-              <option value={0}>Not on OPT / abroad</option>
-              <option value={1}>1 year (OPT)</option>
-              <option value={2}>2 years (OPT + STEM yr 1)</option>
-              <option value={3}>3 years (OPT + STEM 2yr)</option>
+             <option value={0}>Not on OPT / abroad</option>
+             <option value={1}>Regular OPT (2 attempts)</option>
+             <option value={2}>STEM OPT year 1 (3 attempts)</option>
+             <option value={3}>Full STEM OPT (3 attempts)</option>
             </select>
           </div>
         </div>
