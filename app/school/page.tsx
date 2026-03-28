@@ -45,8 +45,8 @@ function SchoolSearch() {
     function handleClick(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setDropOpen(false)
     }
-    document.addEventListener('mouseup', handleClick)
-    return () => document.removeEventListener('mouseup', handleClick)
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
   const POPULAR = [
@@ -117,7 +117,7 @@ function SchoolSearch() {
             boxShadow: '0 4px 16px rgba(0,0,0,.08)', overflow: 'hidden',
           }}>
             {dropResults.map((s, i) => (
-              <button key={s.slug} onClick={() => { setDropOpen(false); router.push(`/school/${s.slug}`) }} style={{
+              <button key={s.slug} onMouseDown={e => { e.preventDefault(); setDropOpen(false); router.push(`/school/${s.slug}`) }} style={{
                 width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '9px 12px', fontSize: 12.5,
                 background: i === selIdx ? '#f9fafb' : 'transparent',
