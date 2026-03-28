@@ -23,6 +23,25 @@ export default function BlogCards() {
         </h2>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+        {/* Latest blog post */}
+        {latestPost && (
+          <Link href={`/blog/${latestPost.slug}`} className="sc-card" style={{ padding: 16, display: 'block' }}>
+            <span style={{
+              fontSize: 9.5, fontWeight: 500,
+              background: cat.bg, color: cat.color,
+              padding: '2px 7px', borderRadius: 4,
+              display: 'inline-block', marginBottom: 8,
+            }}>
+              {latestPost.category}
+            </span>
+            <div style={{ fontSize: 12.5, fontWeight: 500, lineHeight: 1.5, color: '#1a1a1a', marginBottom: 8 }}>
+              {latestPost.title}
+            </div>
+            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 10 }}>{latestPost.date}</div>
+            <span style={{ fontSize: 11, color: '#185FA5', fontWeight: 500 }}>Read more →</span>
+          </Link>
+        )}
+
         {/* Find your match — City comparison */}
         <Link href="/city" className="sc-card" style={{ padding: 16, display: 'block' }}>
           <div style={{
@@ -42,25 +61,6 @@ export default function BlogCards() {
           </p>
           <span style={{ fontSize: 11, color: '#185FA5', fontWeight: 500 }}>Compare cities →</span>
         </Link>
-
-        {/* Latest blog post */}
-        {latestPost && (
-          <Link href={`/blog/${latestPost.slug}`} className="sc-card" style={{ padding: 16, display: 'block' }}>
-            <span style={{
-              fontSize: 9.5, fontWeight: 500,
-              background: cat.bg, color: cat.color,
-              padding: '2px 7px', borderRadius: 4,
-              display: 'inline-block', marginBottom: 8,
-            }}>
-              {latestPost.category}
-            </span>
-            <div style={{ fontSize: 12.5, fontWeight: 500, lineHeight: 1.5, color: '#1a1a1a', marginBottom: 8 }}>
-              {latestPost.title}
-            </div>
-            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 10 }}>{latestPost.date}</div>
-            <span style={{ fontSize: 11, color: '#185FA5', fontWeight: 500 }}>Read more →</span>
-          </Link>
-        )}
 
         {/* Cap-exempt employers */}
         <Link href="/cap-exempt" className="sc-card" style={{ padding: 16, display: 'block' }}>
