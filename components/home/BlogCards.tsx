@@ -17,7 +17,10 @@ export default function BlogCards() {
   return (
     <section style={{ marginBottom: 36 }}>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 500 }}>Explore more</h2>
+        <h2 style={{ fontSize: 14, fontWeight: 500 }}>
+          <span style={{ fontSize: 10, fontWeight: 600, background: '#fee2e2', color: '#dc2626', padding: '2px 7px', borderRadius: 4, marginRight: 8 }}>HOT</span>
+          What's new
+        </h2>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
         {/* Find your match — City comparison */}
