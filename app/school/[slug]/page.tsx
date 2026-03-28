@@ -83,7 +83,7 @@ export default function SchoolDetailPage() {
         <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
           <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>PERM filings</div>
           <div style={{ fontSize: 18, fontWeight: 500 }}>{school.perm_count?.toLocaleString()}</div>
-          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>Certified cases · FY2021–2024</div>
+          <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 2 }}>FY2021–2024</div>
         </div>
         <div style={{ padding: '12px 14px', border: '0.5px solid #e5e7eb', borderRadius: 9 }}>
           <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Median wage</div>
@@ -123,7 +123,7 @@ export default function SchoolDetailPage() {
       </div>
 
       <div style={{ padding: '12px 14px', background: '#f9fafb', border: '0.5px solid #f3f4f6', borderRadius: 8, fontSize: 11, color: '#9ca3af', lineHeight: 1.65 }}>
-        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 certified cases only. Trends shown by relative frequency, not absolute counts.
+        Data extracted from PERM green card filings submitted to the U.S. Department of Labor. FY2021–2024 cases only. Trends shown by relative frequency, not absolute counts.
       </div>
     </div>
   )

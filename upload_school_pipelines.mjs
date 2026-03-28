@@ -7,7 +7,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 async function upload() {
-  const records = JSON.parse(readFileSync('./school_pipelines_v2.json', 'utf-8'))
+  const records = JSON.parse(readFileSync('./school_pipelines_v3.json', 'utf-8'))
   console.log(`Total records: ${records.length}`)
 
   // Upload in batches (no delete - Supabase SQL Editor에서 TRUNCATE 먼저 실행 필요)

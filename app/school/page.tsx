@@ -53,7 +53,7 @@ function SchoolSearch() {
       </div>
 
       <div style={{ padding: '12px 14px', background: '#E6F1FB', border: '0.5px solid #B5D4F4', borderRadius: 8, marginBottom: 20, fontSize: 12, color: '#1e3a5f', lineHeight: 1.6 }}>
-        Data extracted from PERM green card filings submitted to the U.S. Department of Labor, where employers listed the foreign worker's institution of education. FY2021–2024 certified cases only.
+        Data extracted from PERM green card filings submitted to the U.S. Department of Labor, where employers listed the foreign worker's institution of education. FY2021–2024 cases only.
       </div>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
