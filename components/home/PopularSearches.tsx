@@ -29,23 +29,18 @@ export default async function PopularSearches() {
 
   return (
     <section style={{ marginBottom: 36 }}>
-      <div style={{ marginBottom: 14 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 500 }}>Popular searches</h2>
-      </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1.5fr', gap: 24 }}>
 
-        {/* H1B Explorer */}
         <div>
-          <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 4 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', marginBottom: 2 }}>
             H1B Explorer
           </div>
-          <div style={{ fontSize: 10, color: '#c4c9d1', marginBottom: 10 }}>
+          <div style={{ fontSize: 11.5, color: '#9ca3af', marginBottom: 12 }}>
             Industry · Job · Location
           </div>
           <H1BExplorerWidget />
         </div>
 
-        {/* Green Card by University */}
         <div>
           <div style={{ fontSize: 10, fontWeight: 500, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 10 }}>
             Green Card by University
