@@ -253,7 +253,7 @@ function RankingsContent() {
         .page-info { font-size:12.5px; color:#aaa; }
         .skeleton { background:linear-gradient(90deg,#f0ede8 25%,#e8e6e1 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:4px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-        .click-hint { display:flex; align-items:center; gap:8px; font-size:13px; color:#5b7cfa; margin-bottom:12px; }
+        .click-hint { display:flex; align-items:center; gap:8px; font-size:14.5px; color:#5b7cfa; margin-bottom:14px; font-weight:500; }
         .click-hint-icon { animation:pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:0.6; transform:scale(0.95); } }
       `}</style>
