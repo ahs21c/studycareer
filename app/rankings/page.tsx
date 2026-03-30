@@ -25,6 +25,12 @@ interface Company {
   has_perm?: boolean;
 }
 
+interface StateBreakdown {
+  state: string;
+  lca_count: number;
+  avg_salary: number;
+}
+
 const SECTOR_LABELS: Record<string, string> = {
   ACCOUNTING: "Accounting", ADMIN_SUPPORT: "Admin & Support", ADVERTISING_PR: "Advertising & PR",
   AEROSPACE_MFG: "Aerospace", AGRICULTURE: "Agriculture", AI_DIGITAL_PLATFORMS: "AI & Digital",
@@ -85,6 +91,8 @@ function RankingsContent() {
   const [trendFilter, setTrendFilter] = useState("");
   const [activeRow, setActiveRow]     = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
+  const [stateBreakdown, setStateBreakdown]       = useState<StateBreakdown[]>([]);
+  const [loadingBreakdown, setLoadingBreakdown]   = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => { setSearch(searchInput); setPage(0); }, 350);
@@ -129,6 +137,21 @@ function RankingsContent() {
   }, [search, sector, stateFilter, permOnly, trendFilter, page]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    if (!activeRow) { setStateBreakdown([]); return; }
+    setLoadingBreakdown(true);
+    supabase
+      .from("company_state_breakdown")
+      .select("state, lca_count, avg_salary")
+      .eq("employer_name", activeRow)
+      .order("lca_count", { ascending: false })
+      .limit(10)
+      .then(({ data }) => {
+        setStateBreakdown(data ?? []);
+        setLoadingBreakdown(false);
+      });
+  }, [activeRow]);
 
   const resetFilters = () => {
     setSearchInput(""); setSearch(""); setSector("");
@@ -375,6 +398,23 @@ function RankingsContent() {
                   </div>
                 </>
               )}
+              <div className="panel-section">Filings by State</div>
+              {loadingBreakdown ? (
+                <div style={{ background:"#f8f7f4",borderRadius:10,padding:"12px 14px" }}>
+                  {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height:14,marginBottom:8,width:"100%" }} />)}
+                </div>
+              ) : stateBreakdown.length > 0 ? (
+                <div style={{ background:"#f8f7f4",borderRadius:10,padding:"10px 14px" }}>
+                  {stateBreakdown.map((s) => (
+                    <div key={s.state} style={{ display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:"1px solid #ede9e3" }}>
+                      <span style={{ width:28,height:19,background:"#e0ddd8",borderRadius:4,fontSize:10.5,fontWeight:700,color:"#555",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>{s.state}</span>
+                      <span style={{ flex:1,fontSize:12,color:"#444" }}>{s.lca_count.toLocaleString()} filings</span>
+                      <span style={{ fontSize:12,color:"#888",fontWeight:500 }}>${Math.round(s.avg_salary/1000)}K</span>
+                    </div>
+                  ))}
+                  <div style={{ fontSize:10,color:"#bbb",marginTop:8 }}>FY2022-2024 · LCA filings only</div>
+                </div>
+              ) : null}
               <div className="panel-section">Insight</div>
               <div className="insight-box">
                 {c.has_perm ? "This employer has both H1B hiring activity and green card sponsorship history — a strong long-term career option." : "Active H1B hirer but no green card sponsorship history. Plan for future employer transfer if green card is a priority."}
