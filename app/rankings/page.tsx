@@ -1,14 +1,14 @@
 "use client";
-
+ 
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-
+ 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
-
+ 
 interface Company {
   employer_name: string;
   employer_state: string;
@@ -24,13 +24,7 @@ interface Company {
   h1b_ratio: number;
   has_perm?: boolean;
 }
-
-interface StateBreakdown {
-  state: string;
-  lca_count: number;
-  avg_salary: number;
-}
-
+ 
 const SECTOR_LABELS: Record<string, string> = {
   ACCOUNTING: "Accounting", ADMIN_SUPPORT: "Admin & Support", ADVERTISING_PR: "Advertising & PR",
   AEROSPACE_MFG: "Aerospace", AGRICULTURE: "Agriculture", AI_DIGITAL_PLATFORMS: "AI & Digital",
@@ -55,31 +49,31 @@ const SECTOR_LABELS: Record<string, string> = {
   TELECOM: "Telecom", TRANSPORTATION: "Transportation & Logistics",
   UNIVERSITIES: "Universities & Research", UTILITIES: "Utilities", WHOLESALE: "Wholesale",
 };
-
+ 
 const POPULAR_SECTORS = [
   "SOFTWARE_PRODUCTS", "IT_SERVICES", "INTERNET_PLATFORMS", "CONSULTING", "BANKING",
   "ACCOUNTING", "SEMICONDUCTOR_MFG", "ENGINEERING_SERVICES", "CLOUD_DATA", "PHARMA_MFG",
 ];
-
+ 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
   "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
   "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY",
 ];
-
+ 
 const TREND_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  INCREASING: { label: "↑ Growing",   color: "#10b981", bg: "rgba(16,185,129,0.1)" },
+  INCREASING: { label: "↗ Growing",   color: "#10b981", bg: "rgba(16,185,129,0.1)" },
   STABLE:     { label: "→ Stable",    color: "#6366f1", bg: "rgba(99,102,241,0.1)" },
-  DECREASING: { label: "↓ Declining", color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
+  DECREASING: { label: "↘ Declining", color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
   NEW:        { label: "★ New",       color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
-  STOPPED:    { label: "■ Stopped",   color: "#aaa",    bg: "rgba(170,170,170,0.1)" },
+  STOPPED:    { label: "⊗ Stopped",   color: "#aaa",    bg: "rgba(170,170,170,0.1)" },
 };
-
+ 
 const PAGE_SIZE = 50;
-
+ 
 function RankingsContent() {
   const searchParams = useSearchParams();
-
+ 
   const [companies, setCompanies]     = useState<Company[]>([]);
   const [total, setTotal]             = useState(0);
   const [loading, setLoading]         = useState(false);
@@ -91,16 +85,14 @@ function RankingsContent() {
   const [trendFilter, setTrendFilter] = useState("");
   const [activeRow, setActiveRow]     = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
-  const [stateBreakdown, setStateBreakdown]       = useState<StateBreakdown[]>([]);
-  const [loadingBreakdown, setLoadingBreakdown]   = useState(false);
-
+ 
   useEffect(() => {
     const t = setTimeout(() => { setSearch(searchInput); setPage(0); }, 350);
     return () => clearTimeout(t);
   }, [searchInput]);
-
+ 
   useEffect(() => { setPage(0); }, [sector, stateFilter, permOnly, trendFilter]);
-
+ 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -109,11 +101,11 @@ function RankingsContent() {
         .select("*", { count: "exact" })
         .order("lca_total_2yr", { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
+ 
       if (search)      query = query.ilike("employer_name", `%${search}%`);
       if (sector)      query = query.eq("sector", sector);
       if (trendFilter) query = query.eq("lca_trend", trendFilter);
-
+ 
       if (stateFilter) {
         query = query.or(
           `top3_worksite_states.like.${stateFilter}|%,` +
@@ -122,9 +114,9 @@ function RankingsContent() {
           `top3_worksite_states.eq.${stateFilter}`
         );
       }
-
+ 
       if (permOnly) query = query.eq("has_perm", true);
-
+ 
       const { data, count, error } = await query;
       if (error) throw error;
       setCompanies(data ?? []);
@@ -135,33 +127,18 @@ function RankingsContent() {
       setLoading(false);
     }
   }, [search, sector, stateFilter, permOnly, trendFilter, page]);
-
+ 
   useEffect(() => { fetchData(); }, [fetchData]);
-
-  useEffect(() => {
-    if (!activeRow) { setStateBreakdown([]); return; }
-    setLoadingBreakdown(true);
-    supabase
-      .from("company_state_breakdown")
-      .select("state, lca_count, avg_salary")
-      .eq("employer_name", activeRow)
-      .order("lca_count", { ascending: false })
-      .limit(10)
-      .then(({ data }) => {
-        setStateBreakdown(data ?? []);
-        setLoadingBreakdown(false);
-      });
-  }, [activeRow]);
-
+ 
   const resetFilters = () => {
     setSearchInput(""); setSearch(""); setSector("");
     setStateFilter(""); setPermOnly(false); setTrendFilter(""); setPage(0);
   };
-
+ 
   const hasFilter = search || sector || stateFilter || permOnly || trendFilter;
   const activeCompany = companies.find((c) => c.employer_name === activeRow);
   const top3States = (raw: string) => raw ? raw.split("|").filter(Boolean) : [];
-
+ 
   return (
     <div style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", background: "#f8f7f4", minHeight: "100vh", color: "#1a1a1a" }}>
       <style>{`
@@ -177,7 +154,7 @@ function RankingsContent() {
         .hero-eyebrow { display:inline-flex; align-items:center; gap:6px; background:rgba(91,124,250,0.15); border:1px solid rgba(91,124,250,0.3); border-radius:20px; padding:4px 12px; font-size:11.5px; color:#8ba4fc; font-weight:500; letter-spacing:0.4px; text-transform:uppercase; margin-bottom:16px; }
         .hero h1 { font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; color:#fff; line-height:1.15; margin-bottom:10px; letter-spacing:-0.5px; }
         .hero h1 em { color:#5b7cfa; font-style:italic; }
-        .hero-sub { color:rgba(255,255,255,0.45); font-size:14px; line-height:1.6; max-width:540px; margin-bottom:28px; }
+        .hero-sub { color:rgba(255,255,255,0.45); font-size:14px; line-height:1.6; max-width:540px; margin-bottom:28px; }  
         .stats-row { display:flex; gap:36px; padding:20px 0; border-top:1px solid rgba(255,255,255,0.07); }
         .stat-num { font-size:22px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
         .stat-label { font-size:11px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
@@ -203,7 +180,7 @@ function RankingsContent() {
         .co-table { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border-radius:14px; border:1.5px solid #e8e6e1; overflow:hidden; }
         .co-table thead tr { background:#f5f4f1; }
         .co-table th { padding:11px 16px; font-size:11px; font-weight:600; color:#999; text-transform:uppercase; letter-spacing:0.5px; text-align:left; border-bottom:1.5px solid #e8e6e1; white-space:nowrap; }
-        .co-table td { padding:14px 16px; font-size:13.5px; border-bottom:1px solid #f0ede8; vertical-align:middle; }
+        .co-table td { padding:14px 16px; font-size:13.5px; border-bottom:1px solid #f0ede8; vertical-align:middle; }      
         .co-table tbody tr:last-child td { border-bottom:none; }
         .co-table tbody tr { transition:background 0.12s; cursor:pointer; }
         .co-table tbody tr:hover { background:#faf9f7; }
@@ -216,9 +193,9 @@ function RankingsContent() {
         .trend-badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:20px; font-size:11.5px; font-weight:600; white-space:nowrap; }
         .perm-yes { color:#10b981; font-size:12px; font-weight:500; }
         .perm-no { color:#ddd; font-size:12px; }
-        .state-tag { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:19px; padding:0 4px; background:#f0ede8; border-radius:4px; font-size:10.5px; font-weight:700; color:#666; letter-spacing:0.3px; }
+        .state-tag { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:19px; padding:0 4px; background:#f0ede8; border-radius:4px; font-size:10.5px; font-weight:700; color:#666; letter-spacing:0.3px; }       
         .state-tag-active { background:#5b7cfa; color:#fff; }
-        .panel { position:fixed; right:0; top:56px; bottom:0; width:320px; background:#fff; border-left:1.5px solid #e8e6e1; overflow-y:auto; z-index:50; transform:translateX(100%); transition:transform 0.25s cubic-bezier(0.16,1,0.3,1); }
+        .panel { position:fixed; right:0; top:56px; bottom:0; width:320px; background:#fff; border-left:1.5px solid #e8e6e1; overflow-y:auto; z-index:50; transform:translateX(100%); transition:transform 0.25s cubic-bezier(0.16,1,0.3,1); }        
         .panel.open { transform:translateX(0); }
         .panel-inner { padding:28px 24px; }
         .panel-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:6px; border:1.5px solid #e8e6e1; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:#999; }
@@ -227,7 +204,7 @@ function RankingsContent() {
         .panel-sub { font-size:12.5px; color:#bbb; margin-bottom:22px; }
         .metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
         .metric-card { background:#f8f7f4; border-radius:10px; padding:13px; }
-        .metric-label { font-size:10.5px; color:#bbb; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+        .metric-label { font-size:10.5px; color:#bbb; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; } 
         .metric-val { font-size:19px; font-weight:700; color:#1a1a1a; letter-spacing:-0.5px; }
         .metric-hint { font-size:10.5px; color:#ccc; margin-top:2px; }
         .panel-section { font-size:11px; font-weight:600; color:#bbb; text-transform:uppercase; letter-spacing:0.5px; margin:16px 0 8px; }
@@ -245,7 +222,7 @@ function RankingsContent() {
         .skeleton { background:linear-gradient(90deg,#f0ede8 25%,#e8e6e1 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:4px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
       `}</style>
-
+ 
       <header className="header-bar">
         <div className="logo">Study<span>Career</span></div>
         <nav className="nav-links">
@@ -256,7 +233,7 @@ function RankingsContent() {
           <a href="/visa">Visa Calculator</a>
         </nav>
       </header>
-
+ 
       <div className="hero">
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div className="hero-eyebrow">● FY2024-2025 · DOL Public Data</div>
@@ -280,7 +257,7 @@ function RankingsContent() {
           </div>
         </div>
       </div>
-
+ 
       <div className="section" style={{ paddingTop: 28 }}>
         <div className="search-row">
           <div className="search-wrap">
@@ -299,7 +276,7 @@ function RankingsContent() {
         <div className="chip-row">
           <span style={{ fontSize: 12, color: "#aaa", marginRight: 4 }}>Quick filters:</span>
           <span className={`chip ${permOnly ? "chip-active" : ""}`} onClick={() => setPermOnly(!permOnly)}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", opacity: 0.7 }} />
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", opacity: 0.7 }} />        
             Green Card Sponsors
           </span>
           {(["INCREASING", "NEW"] as const).map((t) => (
@@ -314,7 +291,7 @@ function RankingsContent() {
           ))}
         </div>
       </div>
-
+ 
       <div className="meta-row">
         <p className="meta-count">
           {loading ? "Searching..." : <><strong>{total.toLocaleString()}</strong> companies {page > 0 && `· Page ${page + 1}`}</>}
@@ -322,7 +299,7 @@ function RankingsContent() {
         </p>
         <span className="sort-note">Sorted by LCA filings</span>
       </div>
-
+ 
       <div className="table-wrap">
         {loading ? (
           <table className="co-table">
@@ -349,8 +326,8 @@ function RankingsContent() {
                       <td><div className="co-name">{c.employer_name}</div><div className="co-sector">{SECTOR_LABELS[c.sector] ?? c.sector}</div></td>
                       <td><div className="num">{c.lca_total_2yr.toLocaleString()}</div><div className="num-sub">{c.lca_fy2024.toLocaleString()} → {c.lca_fy2025.toLocaleString()}</div></td>
                       <td><div className="num">{c.avg_salary_fy2025 ? `$${Math.round(c.avg_salary_fy2025/1000)}K` : "—"}</div>{c.p75_salary_fy2025 > 0 && <div className="num-sub">P75 ${Math.round(c.p75_salary_fy2025/1000)}K</div>}</td>
-                      <td><span className="trend-badge" style={{ color:t.color, background:t.bg }}>{t.label}</span></td>
-                      <td>{c.has_perm ? <span className="perm-yes">✓ Yes</span> : <span className="perm-no">— No</span>}</td>
+                      <td><span className="trend-badge" style={{ color:t.color, background:t.bg }}>{t.label}</span></td>   
+                      <td>{c.has_perm ? <span className="perm-yes">✓ Yes</span> : <span className="perm-no">◯ No</span>}</td>
                       <td><div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>{states.map((s,idx) => <span key={s} className={`state-tag ${stateFilter===s?"state-tag-active":""}`} style={idx===0&&!stateFilter?{background:"#e8e6e1",color:"#444"}:{}}>{s}</span>)}</div></td>
                     </tr>
                   );
@@ -372,7 +349,7 @@ function RankingsContent() {
           </>
         )}
       </div>
-
+ 
       {activeCompany && (() => {
         const c = activeCompany;
         const t = TREND_CONFIG[c.lca_trend] ?? TREND_CONFIG.STABLE;
@@ -380,13 +357,13 @@ function RankingsContent() {
         return (
           <div className="panel open">
             <div className="panel-inner">
-              <button className="panel-close" onClick={() => setActiveRow(null)}>✕</button>
+              <button className="panel-close" onClick={() => setActiveRow(null)}>×</button>
               <div className="panel-name">{c.employer_name}</div>
               <div className="panel-sub">{SECTOR_LABELS[c.sector] ?? c.sector} · {states.join(", ")}</div>
               <div className="metric-grid">
                 <div className="metric-card"><div className="metric-label">LCA Filings</div><div className="metric-val">{(c.lca_total_2yr/1000).toFixed(1)}K</div><div className="metric-hint">FY2024-2025 combined</div></div>
-                <div className="metric-card"><div className="metric-label">Avg Salary</div><div className="metric-val">{c.avg_salary_fy2025?`$${Math.round(c.avg_salary_fy2025/1000)}K`:"—"}</div><div className="metric-hint">FY2025</div></div>
-                <div className="metric-card"><div className="metric-label">Hiring Trend</div><div className="metric-val" style={{ fontSize:13,color:t.color,marginTop:4 }}>{t.label}</div><div className="metric-hint">vs. prior year</div></div>
+                <div className="metric-card"><div className="metric-label">Avg Salary</div><div className="metric-val">{c.avg_salary_fy2025?`$${Math.round(c.avg_salary_fy2025/1000)}K`:"—"}</div><div className="metric-hint">FY2025</div></div>     
+                <div className="metric-card"><div className="metric-label">Hiring Trend</div><div className="metric-val" style={{ fontSize:13,color:t.color,marginTop:4 }}>{t.label}</div><div className="metric-hint">vs. prior year</div></div>     
                 <div className="metric-card"><div className="metric-label">Green Card</div><div className="metric-val" style={{ fontSize:13,color:c.has_perm?"#10b981":"#ccc",marginTop:4 }}>{c.has_perm?"Sponsor":"None"}</div><div className="metric-hint">FY2021-2025</div></div>
               </div>
               {c.p75_salary_fy2025 > 0 && (
@@ -394,34 +371,66 @@ function RankingsContent() {
                   <div className="panel-section">Salary Range</div>
                   <div style={{ background:"#f8f7f4",borderRadius:10,padding:"12px 14px" }}>
                     <div style={{ display:"flex",justifyContent:"space-between",fontSize:12.5,color:"#666",marginBottom:8 }}><span>Average</span><span style={{ fontWeight:600 }}>${Math.round(c.avg_salary_fy2025/1000)}K</span></div>
-                    <div style={{ display:"flex",justifyContent:"space-between",fontSize:12.5,color:"#666" }}><span>Top 25% (P75)</span><span style={{ fontWeight:600,color:"#5b7cfa" }}>${Math.round(c.p75_salary_fy2025/1000)}K</span></div>
+                    <div style={{ display:"flex",justifyContent:"space-between",fontSize:12.5,color:"#666" }}><span>Top 25% (P75)</span><span style={{ fontWeight:600,color:"#5b7cfa" }}>${Math.round(c.p75_salary_fy2025/1000)}K</span></div>        
                   </div>
                 </>
               )}
-              <div className="panel-section">Filings by State</div>
-              {loadingBreakdown ? (
-                <div style={{ background:"#f8f7f4",borderRadius:10,padding:"12px 14px" }}>
-                  {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height:14,marginBottom:8,width:"100%" }} />)}
+              <div className="panel-section">
+                <div style={{ marginBottom: 8 }}>Top Work Locations</div>
+                <div style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
+                  Actual worksites where H1B employees are placed
                 </div>
-              ) : stateBreakdown.length > 0 ? (
-                <div style={{ background:"#f8f7f4",borderRadius:10,padding:"10px 14px" }}>
-                  {stateBreakdown.map((s) => (
-                    <div key={s.state} style={{ display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:"1px solid #ede9e3" }}>
-                      <span style={{ width:28,height:19,background:"#e0ddd8",borderRadius:4,fontSize:10.5,fontWeight:700,color:"#555",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>{s.state}</span>
-                      <span style={{ flex:1,fontSize:12,color:"#444" }}>{s.lca_count.toLocaleString()} filings</span>
-                      <span style={{ fontSize:12,color:"#888",fontWeight:500 }}>${Math.round(s.avg_salary/1000)}K</span>
+              </div>
+              {states.length > 0 ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                  {states.map((state, idx) => (
+                    <div 
+                      key={idx}
+                      style={{
+                        background: '#f8f7f4',
+                        borderRadius: 8,
+                        padding: 12,
+                        textAlign: 'center'
+                      }}
+                    >
+                      <div style={{ fontSize: 18, fontWeight: 600, color: '#2563eb' }}>
+                        {state.trim()}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>
+                        #{idx + 1}
+                      </div>
                     </div>
                   ))}
-                  <div style={{ fontSize:10,color:"#bbb",marginTop:8 }}>FY2022-2024 · LCA filings only</div>
                 </div>
-              ) : null}
+              ) : (
+                <div style={{ 
+                  background: '#f8f7f4', 
+                  borderRadius: 10, 
+                  padding: 12, 
+                  fontSize: 13, 
+                  color: '#666' 
+                }}>
+                  Location data not available
+                </div>
+              )}
               <div className="panel-section">Insight</div>
               <div className="insight-box">
                 {c.has_perm ? "This employer has both H1B hiring activity and green card sponsorship history — a strong long-term career option." : "Active H1B hirer but no green card sponsorship history. Plan for future employer transfer if green card is a priority."}
                 {c.lca_trend === "INCREASING" && " Hiring is growing — good timing to apply."}
                 {c.lca_trend === "DECREASING" && " Hiring is declining — check current openings before applying."}
               </div>
-              <button className="panel-btn">View Full Company Profile →</button>
+              <button 
+                className="panel-btn"
+                onClick={() => {
+                  const slug = c.employer_name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-|-$/g, '');
+                  window.location.href = `/company/${slug}`;
+                }}
+              >
+                View Full Company Profile →
+              </button>
             </div>
           </div>
         );
@@ -429,7 +438,7 @@ function RankingsContent() {
     </div>
   );
 }
-
+ 
 export default function RankingsPage() {
   return (
     <Suspense fallback={<div style={{ padding: 40, fontFamily: "sans-serif", color: "#999" }}>Loading...</div>}>
