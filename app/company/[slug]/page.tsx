@@ -26,16 +26,6 @@ function toTitle(s: string) {
   return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-  const c = await getCompanyBySlug(slug)
-  if (!c) return { title: 'Company not found' }
-  return {
-    title: `${c.employer_name} — H1B & Green Card Data`,
-    description: `${c.employer_name} filed ${formatNumber(c.lca_total_2yr)} H1B applications (FY2024-2025), avg salary ${formatSalary(c.avg_salary_fy2025)}. ${c.has_perm ? 'Also sponsors PERM green cards.' : ''}`,
-  }
-}
-
 const TREND_STYLE: Record<string, { bg: string; text: string; label: string }> = {
   INCREASING: { bg: '#dcfce7', text: '#166534', label: '↑ Increasing' },
   STABLE:     { bg: '#dbeafe', text: '#1e40af', label: '→ Stable' },
