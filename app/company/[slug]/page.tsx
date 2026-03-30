@@ -279,7 +279,7 @@ function CompanyPageContent({ c, topSchools }: { c: any; topSchools: any[] }) {
             return (
               
                 key={i}
-                href={'/school/' + schoolSlug}
+                href={`/school/${schoolSlug}`}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: '0.5px solid #f3f4f6', textDecoration: 'none', color: 'inherit' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
