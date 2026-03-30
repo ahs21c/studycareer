@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
 // ─── Supabase ───────────────────────────────────────────────────────────────
@@ -29,66 +30,66 @@ interface Company {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const SECTOR_LABELS: Record<string, string> = {
-  ACCOUNTING: "회계",
-  ADMIN_SUPPORT: "행정지원",
-  ADVERTISING_PR: "광고·PR",
-  AEROSPACE_MFG: "항공우주",
-  AGRICULTURE: "농업",
-  AI_DIGITAL_PLATFORMS: "AI·디지털",
-  ARTS_ENTERTAINMENT: "예술·엔터",
-  AUTOMOTIVE_MFG: "자동차",
-  BANKING: "은행·금융",
-  CHEMICAL_MFG: "화학",
-  CLOUD_DATA: "클라우드·데이터",
-  COMPUTER_ELECTRONICS_MFG: "전자기기",
-  CONSTRUCTION: "건설",
-  CONSULTING: "컨설팅",
-  DENTISTS: "치과",
-  DEPARTMENT_STORES: "백화점·유통",
-  DIGITAL_CONTENT: "디지털콘텐츠",
-  ECOMMERCE: "이커머스",
-  ENERGY_MINING: "에너지·채굴",
-  ENGINEERING_SERVICES: "엔지니어링",
-  FOOD_BEVERAGE_MFG: "식품·음료",
-  FOOTWEAR_APPAREL_MFG: "의류·신발",
-  HOLDING_COMPANIES: "지주회사",
-  HOSPITALS: "병원",
-  HOTELS: "호텔·숙박",
-  INDUSTRIAL_MFG: "산업기계",
-  INSTRUMENTS_MFG: "계측기기",
-  INSURANCE: "보험",
-  INTERNET_PLATFORMS: "인터넷플랫폼",
-  INVESTMENT_SECURITIES: "투자·증권",
-  IT_SERVICES: "IT서비스",
-  K12_SCHOOLS: "초중고교",
-  LEGAL: "법률",
-  MEDIA_ENTERTAINMENT: "미디어·엔터",
-  MEDICAL_DEVICES_MFG: "의료기기",
-  OTHER: "기타",
-  OTHER_EDUCATION: "교육(기타)",
-  OTHER_HOSPITALITY: "숙박(기타)",
-  OTHER_MFG: "제조(기타)",
-  OTHER_PROFESSIONAL: "전문직(기타)",
-  OTHER_RETAIL: "소매(기타)",
-  OTHER_SERVICES: "서비스(기타)",
-  OUTPATIENT_HEALTH: "외래진료",
-  PHARMA_MFG: "제약",
-  PHYSICIANS: "의사·클리닉",
-  PUBLIC_ADMIN: "공공행정",
-  REAL_ESTATE: "부동산",
-  RESIDENTIAL_CARE: "요양·돌봄",
-  RESTAURANTS: "음식점",
-  SCIENTIFIC_RD: "연구개발",
-  SEMICONDUCTOR_MFG: "반도체",
-  SOCIAL_SERVICES: "사회복지",
-  SOFTWARE_PRODUCTS: "소프트웨어",
-  SPECIALTY_HOSPITALS: "전문병원",
-  STAFFING: "인력파견",
-  TELECOM: "통신",
-  TRANSPORTATION: "운송·물류",
-  UNIVERSITIES: "대학·연구기관",
-  UTILITIES: "전기·가스",
-  WHOLESALE: "도매",
+  ACCOUNTING: "Accounting",
+  ADMIN_SUPPORT: "Admin & Support",
+  ADVERTISING_PR: "Advertising & PR",
+  AEROSPACE_MFG: "Aerospace",
+  AGRICULTURE: "Agriculture",
+  AI_DIGITAL_PLATFORMS: "AI & Digital",
+  ARTS_ENTERTAINMENT: "Arts & Entertainment",
+  AUTOMOTIVE_MFG: "Automotive",
+  BANKING: "Banking & Finance",
+  CHEMICAL_MFG: "Chemical Mfg",
+  CLOUD_DATA: "Cloud & Data",
+  COMPUTER_ELECTRONICS_MFG: "Electronics Mfg",
+  CONSTRUCTION: "Construction",
+  CONSULTING: "Consulting",
+  DENTISTS: "Dentistry",
+  DEPARTMENT_STORES: "Retail & Dept Stores",
+  DIGITAL_CONTENT: "Digital Content",
+  ECOMMERCE: "E-Commerce",
+  ENERGY_MINING: "Energy & Mining",
+  ENGINEERING_SERVICES: "Engineering Services",
+  FOOD_BEVERAGE_MFG: "Food & Beverage",
+  FOOTWEAR_APPAREL_MFG: "Apparel & Footwear",
+  HOLDING_COMPANIES: "Holding Companies",
+  HOSPITALS: "Hospitals",
+  HOTELS: "Hotels & Hospitality",
+  INDUSTRIAL_MFG: "Industrial Mfg",
+  INSTRUMENTS_MFG: "Instruments Mfg",
+  INSURANCE: "Insurance",
+  INTERNET_PLATFORMS: "Internet Platforms",
+  INVESTMENT_SECURITIES: "Investment & Securities",
+  IT_SERVICES: "IT Services",
+  K12_SCHOOLS: "K-12 Schools",
+  LEGAL: "Legal",
+  MEDIA_ENTERTAINMENT: "Media & Entertainment",
+  MEDICAL_DEVICES_MFG: "Medical Devices",
+  OTHER: "Other",
+  OTHER_EDUCATION: "Education (Other)",
+  OTHER_HOSPITALITY: "Hospitality (Other)",
+  OTHER_MFG: "Manufacturing (Other)",
+  OTHER_PROFESSIONAL: "Professional (Other)",
+  OTHER_RETAIL: "Retail (Other)",
+  OTHER_SERVICES: "Services (Other)",
+  OUTPATIENT_HEALTH: "Outpatient Health",
+  PHARMA_MFG: "Pharma",
+  PHYSICIANS: "Physicians & Clinics",
+  PUBLIC_ADMIN: "Public Administration",
+  REAL_ESTATE: "Real Estate",
+  RESIDENTIAL_CARE: "Residential Care",
+  RESTAURANTS: "Restaurants",
+  SCIENTIFIC_RD: "Scientific R&D",
+  SEMICONDUCTOR_MFG: "Semiconductor",
+  SOCIAL_SERVICES: "Social Services",
+  SOFTWARE_PRODUCTS: "Software",
+  SPECIALTY_HOSPITALS: "Specialty Hospitals",
+  STAFFING: "Staffing",
+  TELECOM: "Telecom",
+  TRANSPORTATION: "Transportation & Logistics",
+  UNIVERSITIES: "Universities & Research",
+  UTILITIES: "Utilities",
+  WHOLESALE: "Wholesale",
 };
 
 const POPULAR_SECTORS = [
@@ -113,32 +114,34 @@ const US_STATES = [
 ];
 
 const TREND_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  INCREASING: { label: "↑ 증가", color: "#10b981", bg: "rgba(16,185,129,0.1)" },
-  STABLE:     { label: "→ 유지", color: "#6366f1", bg: "rgba(99,102,241,0.1)" },
-  DECREASING: { label: "↓ 감소", color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
-  NEW:        { label: "★ 신규", color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
-  STOPPED:    { label: "■ 중단", color: "#aaa",    bg: "rgba(170,170,170,0.1)" },
+  INCREASING: { label: "↑ Growing",  color: "#10b981", bg: "rgba(16,185,129,0.1)" },
+  STABLE:     { label: "→ Stable",   color: "#6366f1", bg: "rgba(99,102,241,0.1)" },
+  DECREASING: { label: "↓ Declining",color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
+  NEW:        { label: "★ New",      color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
+  STOPPED:    { label: "■ Stopped",  color: "#aaa",    bg: "rgba(170,170,170,0.1)" },
 };
 
 const PAGE_SIZE = 50;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function RankingsPage() {
+  const searchParams = useSearchParams();
+
   const [companies, setCompanies]       = useState<Company[]>([]);
   const [total, setTotal]               = useState(0);
   const [loading, setLoading]           = useState(false);
   const [page, setPage]                 = useState(0);
 
-  // filters
-  const [search, setSearch]             = useState("");
-  const [sector, setSector]             = useState("");
-  const [stateFilter, setStateFilter]   = useState("");
+  // filters — pre-populate from URL params (coming from H1B Explorer widget)
+  const [search, setSearch]             = useState(searchParams.get("q") ?? "");
+  const [sector, setSector]             = useState(searchParams.get("sector") ?? "");
+  const [stateFilter, setStateFilter]   = useState(searchParams.get("state") ?? "");
   const [permOnly, setPermOnly]         = useState(false);
   const [trendFilter, setTrendFilter]   = useState("");
 
   // ui
   const [activeRow, setActiveRow]       = useState<string | null>(null);
-  const [searchInput, setSearchInput]   = useState("");
+  const [searchInput, setSearchInput]   = useState(searchParams.get("q") ?? "");
 
   // debounce search
   useEffect(() => {
@@ -308,29 +311,29 @@ export default function RankingsPage() {
       <header className="header-bar">
         <div className="logo">Study<span>Career</span></div>
         <nav className="nav-links">
-          <a href="/universities">대학 선택</a>
-          <a href="/rankings" className="nav-active">H1B 고용</a>
-          <a href="/green-card">영주권 스폰서</a>
-          <a href="/cities">도시 가이드</a>
-          <a href="/visa">비자 계산기</a>
+          <a href="/universities">Universities</a>
+          <a href="/rankings" className="nav-active">H1B Explorer</a>
+          <a href="/green-card">Green Card</a>
+          <a href="/cities">City Guide</a>
+          <a href="/visa">Visa Calculator</a>
         </nav>
       </header>
 
       {/* ── Hero ── */}
       <div className="hero">
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
-          <div className="hero-eyebrow">● FY2024-2025 · DOL 공개 데이터</div>
-          <h1>미국 H1B 고용 탐색기<br /><em>94,623개 기업</em> 전수 검색</h1>
+          <div className="hero-eyebrow">● FY2024-2025 · DOL Public Data</div>
+          <h1>U.S. H1B Employer Explorer<br /><em>94,623 Companies</em> — Full Database</h1>
           <p className="hero-sub">
-            전공·산업·지역으로 H1B 채용 기업을 찾고,<br />
-            영주권 스폰서 이력까지 한 화면에 확인하세요.
+            Search H1B employers by industry, job, and location.<br />
+            Check green card sponsorship history in one place.
           </p>
           <div className="stats-row">
             {[
-              ["94,623", "H1B 활동 기업"],
-              ["1.57M", "LCA 신청 건수 (2년)"],
-              ["$147K", "전체 평균 연봉"],
-              ["61,670", "영주권 스폰서 기업"],
+              ["94,623", "H1B Active Employers"],
+              ["1.57M", "LCA Filings (2yr)"],
+              ["$147K", "Avg Salary"],
+              ["61,670", "Green Card Sponsors"],
             ].map(([n, l]) => (
               <div key={l}>
                 <div className="stat-num">{n}</div>
@@ -348,7 +351,7 @@ export default function RankingsPage() {
             <span className="search-icon">🔍</span>
             <input
               className="search-input"
-              placeholder="기업명 검색 — Amazon, Google, Deloitte..."
+              placeholder="Search company — Amazon, Google, Deloitte..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
@@ -361,34 +364,34 @@ export default function RankingsPage() {
             onChange={(e) => setSector(e.target.value)}
             style={{ minWidth: 170 }}
           >
-            <option value="">전체 산업</option>
+            <option value="">All Industries</option>
             {Object.entries(SECTOR_LABELS).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
             ))}
           </select>
 
-          {/* State — TOP3 기반 필터 */}
+          {/* State */}
           <select
             className="filter-select"
             value={stateFilter}
             onChange={(e) => setStateFilter(e.target.value)}
             style={{ minWidth: 110 }}
           >
-            <option value="">전체 주</option>
+            <option value="">All States</option>
             {US_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
 
         {/* Quick-filter chips */}
         <div className="chip-row">
-          <span style={{ fontSize: 12, color: "#aaa", marginRight: 4 }}>빠른 필터:</span>
+          <span style={{ fontSize: 12, color: "#aaa", marginRight: 4 }}>Quick filters:</span>
 
           <span
             className={`chip ${permOnly ? "chip-active" : ""}`}
             onClick={() => setPermOnly(!permOnly)}
           >
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", opacity: 0.7 }} />
-            영주권 스폰서만
+            Green Card Sponsors
           </span>
 
           {(["INCREASING", "NEW"] as const).map((t) => (
@@ -397,7 +400,7 @@ export default function RankingsPage() {
               className={`chip ${trendFilter === t ? "chip-active" : ""}`}
               onClick={() => setTrendFilter(trendFilter === t ? "" : t)}
             >
-              {TREND_CONFIG[t].label} 기업
+              {TREND_CONFIG[t].label}
             </span>
           ))}
 
@@ -416,14 +419,14 @@ export default function RankingsPage() {
       {/* ── Meta ── */}
       <div className="meta-row">
         <p className="meta-count">
-          {loading ? "검색 중..." : (
-            <><strong>{total.toLocaleString()}</strong>개 기업 {page > 0 && `· ${page + 1}페이지`}</>
+          {loading ? "Searching..." : (
+            <><strong>{total.toLocaleString()}</strong> companies {page > 0 && `· Page ${page + 1}`}</>
           )}
           {hasFilter && (
-            <> · <span className="reset-link" onClick={resetFilters}>필터 초기화</span></>
+            <> · <span className="reset-link" onClick={resetFilters}>Clear filters</span></>
           )}
         </p>
-        <span className="sort-note">LCA 건수 기준 정렬</span>
+        <span className="sort-note">Sorted by LCA filings</span>
       </div>
 
       {/* ── Table ── */}
@@ -432,7 +435,7 @@ export default function RankingsPage() {
           <table className="co-table">
             <thead>
               <tr>
-                {["#", "기업명", "LCA 건수", "평균 연봉", "채용 트렌드", "영주권", "주요 근무지"].map((h) => (
+                {["#", "Company", "LCA Filings", "Avg Salary", "Trend", "Green Card", "Top States"].map((h) => (
                   <th key={h}>{h}</th>
                 ))}
               </tr>
@@ -453,8 +456,8 @@ export default function RankingsPage() {
           </table>
         ) : companies.length === 0 ? (
           <div className="empty">
-            <h3>검색 결과 없음</h3>
-            <p>다른 키워드나 필터를 시도해보세요.</p>
+            <h3>No results found</h3>
+            <p>Try a different keyword or filter.</p>
           </div>
         ) : (
           <>
@@ -462,12 +465,12 @@ export default function RankingsPage() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>기업명</th>
-                  <th>LCA 건수 ↓</th>
-                  <th>평균 연봉</th>
-                  <th>채용 트렌드</th>
-                  <th>영주권 스폰서</th>
-                  <th>주요 근무지</th>
+                  <th>Company</th>
+                  <th>LCA Filings ↓</th>
+                  <th>Avg Salary</th>
+                  <th>Hiring Trend</th>
+                  <th>Green Card</th>
+                  <th>Top States</th>
                 </tr>
               </thead>
               <tbody>
@@ -513,8 +516,8 @@ export default function RankingsPage() {
                       </td>
                       <td>
                         {c.has_perm
-                          ? <span className="perm-yes">✓ 있음</span>
-                          : <span className="perm-no">— 없음</span>}
+                          ? <span className="perm-yes">✓ Yes</span>
+                          : <span className="perm-no">— No</span>}
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
@@ -543,7 +546,7 @@ export default function RankingsPage() {
                   disabled={page === 0}
                   onClick={() => setPage(page - 1)}
                 >
-                  ← 이전
+                  ← Prev
                 </button>
                 {Array.from({ length: Math.min(5, Math.ceil(total / PAGE_SIZE)) }).map((_, i) => {
                   const p = Math.max(0, page - 2) + i;
@@ -563,10 +566,10 @@ export default function RankingsPage() {
                   disabled={page >= Math.ceil(total / PAGE_SIZE) - 1}
                   onClick={() => setPage(page + 1)}
                 >
-                  다음 →
+                  Next →
                 </button>
                 <span className="page-info">
-                  {page + 1} / {Math.ceil(total / PAGE_SIZE)} 페이지 · 총 {total.toLocaleString()}개
+                  Page {page + 1} / {Math.ceil(total / PAGE_SIZE)} · {total.toLocaleString()} total
                 </span>
               </div>
             )}
@@ -590,26 +593,26 @@ export default function RankingsPage() {
 
               <div className="metric-grid">
                 <div className="metric-card">
-                  <div className="metric-label">LCA 건수</div>
+                  <div className="metric-label">LCA Filings</div>
                   <div className="metric-val">{(c.lca_total_2yr / 1000).toFixed(1)}K</div>
-                  <div className="metric-hint">FY2024-2025 합산</div>
+                  <div className="metric-hint">FY2024-2025 combined</div>
                 </div>
                 <div className="metric-card">
-                  <div className="metric-label">평균 연봉</div>
+                  <div className="metric-label">Avg Salary</div>
                   <div className="metric-val">
                     {c.avg_salary_fy2025 ? `$${Math.round(c.avg_salary_fy2025 / 1000)}K` : "—"}
                   </div>
-                  <div className="metric-hint">FY2025 기준</div>
+                  <div className="metric-hint">FY2025</div>
                 </div>
                 <div className="metric-card">
-                  <div className="metric-label">채용 트렌드</div>
+                  <div className="metric-label">Hiring Trend</div>
                   <div className="metric-val" style={{ fontSize: 13, color: t.color, marginTop: 4 }}>{t.label}</div>
-                  <div className="metric-hint">전년 대비</div>
+                  <div className="metric-hint">vs. prior year</div>
                 </div>
                 <div className="metric-card">
-                  <div className="metric-label">영주권 스폰서</div>
+                  <div className="metric-label">Green Card</div>
                   <div className="metric-val" style={{ fontSize: 13, color: c.has_perm ? "#10b981" : "#ccc", marginTop: 4 }}>
-                    {c.has_perm ? "이력 있음" : "없음"}
+                    {c.has_perm ? "Sponsor" : "None"}
                   </div>
                   <div className="metric-hint">FY2021-2025</div>
                 </div>
@@ -617,16 +620,16 @@ export default function RankingsPage() {
 
               {c.p75_salary_fy2025 > 0 && (
                 <>
-                  <div className="panel-section">연봉 분포</div>
+                  <div className="panel-section">Salary Range</div>
                   <div style={{ background: "#f8f7f4", borderRadius: 10, padding: "12px 14px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "#666", marginBottom: 8 }}>
-                      <span>평균</span>
+                      <span>Average</span>
                       <span style={{ fontWeight: 600 }}>
                         ${Math.round(c.avg_salary_fy2025 / 1000)}K
                       </span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "#666" }}>
-                      <span>상위 25% (P75)</span>
+                      <span>Top 25% (P75)</span>
                       <span style={{ fontWeight: 600, color: "#5b7cfa" }}>
                         ${Math.round(c.p75_salary_fy2025 / 1000)}K
                       </span>
@@ -635,16 +638,16 @@ export default function RankingsPage() {
                 </>
               )}
 
-              <div className="panel-section">인사이트</div>
+              <div className="panel-section">Insight</div>
               <div className="insight-box">
                 {c.has_perm
-                  ? `H1B 채용과 영주권 스폰서 이력을 모두 갖춘 기업입니다. 장기 커리어 경로로 적합합니다.`
-                  : `H1B 채용은 활발하지만 영주권 스폰서 이력이 없습니다. 입사 후 이직 계획을 함께 세우는 것을 권장합니다.`}
-                {c.lca_trend === "INCREASING" && " 최근 채용이 증가 추세로 지원 타이밍이 좋습니다."}
-                {c.lca_trend === "DECREASING" && " 채용이 감소 중이므로 지원 전 최신 채용 공고를 확인하세요."}
+                  ? `This employer has both H1B hiring activity and green card sponsorship history — a strong long-term career option.`
+                  : `Active H1B hirer but no green card sponsorship history. Plan for future employer transfer if green card is a priority.`}
+                {c.lca_trend === "INCREASING" && " Hiring is growing — good timing to apply."}
+                {c.lca_trend === "DECREASING" && " Hiring is declining — check current openings before applying."}
               </div>
 
-              <button className="panel-btn">기업 상세 프로필 보기 →</button>
+              <button className="panel-btn">View Full Company Profile →</button>
             </div>
           </div>
         );
