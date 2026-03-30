@@ -58,7 +58,7 @@ export default async function PopularSearches() {
               </div>
             </Link>
           ))}
-          <Link href="/rankings/top-100" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
+          <Link href="/rankings" style={{ fontSize: 11, color: '#185FA5', marginTop: 6, display: 'block', paddingLeft: 2 }}>
             View all H1B sponsors →
           </Link>
         </div>
