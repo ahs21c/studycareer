@@ -1,12 +1,26 @@
+'use client'
+
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { formatNumber, formatSalary } from '@/lib/utils'
 import BookmarkButton from '@/components/company/BookmarkButton'
 import { getCompanyBySlug, getTopSchoolsByCompany } from '@/lib/supabase/queries'
+import { useEffect, useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export const revalidate = 604800
 
 interface Props { params: Promise<{ slug: string }> }
+
+interface WorksiteLocation {
+  worksite_state: string;
+  lca_count: number;
+}
 
 function toTitle(s: string) {
   return s.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
@@ -48,12 +62,29 @@ const SECTOR_LABELS: Record<string, string> = {
   EDUCATION: 'Education',
 }
 
-export default async function CompanyPage({ params }: Props) {
-  const { slug } = await params
-  const c = await getCompanyBySlug(slug)
-  if (!c) notFound()
+function CompanyPageContent({ c, topSchools }: { c: any; topSchools: any[] }) {
+  const [worksiteBreakdown, setWorksiteBreakdown] = useState<WorksiteLocation[]>([])
 
-  const topSchools = await getTopSchoolsByCompany(c.employer_name)
+  useEffect(() => {
+    async function fetchWorksiteData() {
+      try {
+        const { data } = await supabase
+          .from('company_worksite_breakdown')
+          .select('worksite_state, lca_count')
+          .eq('employer_name', c.employer_name.toUpperCase())
+          .order('lca_count', { ascending: false })
+          .limit(10)
+        
+        if (data) {
+          setWorksiteBreakdown(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch worksite data:', err)
+      }
+    }
+    
+    fetchWorksiteData()
+  }, [c.employer_name])
 
   const t = TREND_STYLE[c.lca_trend] ?? TREND_STYLE.STABLE
   const yoy = c.lca_fy2024 > 0
@@ -74,7 +105,7 @@ export default async function CompanyPage({ params }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#9ca3af', marginBottom: 12 }}>
           <a href="/" style={{ color: '#9ca3af' }}>Home</a>
           <span>›</span>
-          <a href="/rankings/top-100" style={{ color: '#9ca3af' }}>Companies</a>
+          <a href="/rankings" style={{ color: '#9ca3af' }}>Companies</a>
           <span>›</span>
           <span style={{ color: '#6b7280' }}>{SECTOR_LABELS[c.sector] ?? c.sector}</span>
           <span>›</span>
@@ -158,14 +189,31 @@ export default async function CompanyPage({ params }: Props) {
             ))}
           </div>
         )}
-        {topStates.length > 0 && (
+        {worksiteBreakdown.length > 0 && (
           <div>
             <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Work locations</div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
-              {topStates.map((state, i) => (
-                <span key={i} style={{ fontSize: 11, background: i === 0 ? '#E6F1FB' : '#f3f4f6', color: i === 0 ? '#185FA5' : '#6b7280', padding: '3px 10px', borderRadius: 5 }}>
-                  {state}
-                </span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginTop: 8 }}>
+              {worksiteBreakdown.map((location, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    padding: '10px 8px',
+                    background: idx === 0 ? '#E6F1FB' : '#fafafa',
+                    border: idx === 0 ? '0.5px solid #B5D4F4' : '0.5px solid #f3f4f6',
+                    borderRadius: 6,
+                    textAlign: 'center'
+                  }}
+                >
+                  <div style={{ fontSize: 11, fontWeight: 500, color: idx === 0 ? '#185FA5' : '#1a1a1a', marginBottom: 3 }}>
+                    {location.worksite_state}
+                  </div>
+                  <div style={{ fontSize: 10.5, color: idx === 0 ? '#0C447C' : '#6b7280' }}>
+                    {location.lca_count.toLocaleString()} cases
+                  </div>
+                  <div style={{ fontSize: 9, color: '#9ca3af', marginTop: 2 }}>
+                    #{idx + 1}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -224,12 +272,12 @@ export default async function CompanyPage({ params }: Props) {
             Top hiring schools
           </div>
           <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 12 }}>
-            Universities most represented in PERM green card filings · FY2021–20244
+            Universities most represented in PERM green card filings · FY2021–2024
           </div>
           {topSchools.map((s, i) => {
             const schoolSlug = s.university_std.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
             return (
-              <a
+              
                 key={i}
                 href={'/school/' + schoolSlug}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: '0.5px solid #f3f4f6', textDecoration: 'none', color: 'inherit' }}
@@ -241,8 +289,8 @@ export default async function CompanyPage({ params }: Props) {
                       {s.university_std.toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
                     </div>
                     {s.top_major && (
-                <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
-                  )}
+                      <div style={{ fontSize: 10.5, color: '#9ca3af', marginTop: 1 }}>{s.top_major}</div>
+                    )}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -265,4 +313,14 @@ export default async function CompanyPage({ params }: Props) {
       </div>
     </div>
   )
+}
+
+export default async function CompanyPage({ params }: Props) {
+  const { slug } = await params
+  const c = await getCompanyBySlug(slug)
+  if (!c) notFound()
+
+  const topSchools = await getTopSchoolsByCompany(c.employer_name)
+
+  return <CompanyPageContent c={c} topSchools={topSchools} />
 }
