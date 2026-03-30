@@ -99,7 +99,6 @@ function RankingsContent() {
 
   useEffect(() => { setPage(0); }, [sector, stateFilter, permOnly, trendFilter]);
 
-  // 회사 클릭 시 주별 건수 조회
   useEffect(() => {
     async function fetchWorksiteData() {
       if (!activeRow) {
@@ -183,14 +182,14 @@ function RankingsContent() {
         .nav-links { display:flex; gap:28px; }
         .nav-links a { color:rgba(255,255,255,0.5); font-size:13.5px; text-decoration:none; cursor:pointer; transition:color 0.2s; }
         .nav-links a:hover, .nav-active { color:#fff !important; }
-        .hero { background:#0f1117; padding:48px 40px 0; }
-        .hero-eyebrow { display:inline-flex; align-items:center; gap:6px; background:rgba(91,124,250,0.15); border:1px solid rgba(91,124,250,0.3); border-radius:20px; padding:4px 12px; font-size:11.5px; color:#8ba4fc; font-weight:500; letter-spacing:0.4px; text-transform:uppercase; margin-bottom:16px; }
-        .hero h1 { font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; color:#fff; line-height:1.15; margin-bottom:10px; letter-spacing:-0.5px; }
+        .hero { background:#fff; padding:48px 40px 0; border-bottom:1px solid #e8e6e1; }
+        .hero-eyebrow { display:inline-flex; align-items:center; gap:6px; background:rgba(91,124,250,0.08); border:1px solid rgba(91,124,250,0.2); border-radius:20px; padding:4px 12px; font-size:11.5px; color:#5b7cfa; font-weight:500; letter-spacing:0.4px; text-transform:uppercase; margin-bottom:16px; }
+        .hero h1 { font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; color:#1a1a1a; line-height:1.15; margin-bottom:10px; letter-spacing:-0.5px; }
         .hero h1 em { color:#5b7cfa; font-style:italic; }
-        .hero-sub { color:rgba(255,255,255,0.45); font-size:14px; line-height:1.6; max-width:540px; margin-bottom:28px; }  
-        .stats-row { display:flex; gap:36px; padding:20px 0; border-top:1px solid rgba(255,255,255,0.07); }
-        .stat-num { font-size:22px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
-        .stat-label { font-size:11px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+        .hero-sub { color:#666; font-size:14px; line-height:1.6; max-width:540px; margin-bottom:28px; }  
+        .stats-row { display:flex; gap:36px; padding:20px 0; border-top:1px solid #e8e6e1; }
+        .stat-num { font-size:22px; font-weight:700; color:#1a1a1a; letter-spacing:-0.5px; }
+        .stat-label { font-size:11px; color:#999; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
         .section { padding:24px 40px 0; max-width:1300px; margin:0 auto; }
         .search-row { display:flex; gap:10px; align-items:center; margin-bottom:12px; }
         .search-wrap { flex:1; position:relative; }
@@ -254,6 +253,9 @@ function RankingsContent() {
         .page-info { font-size:12.5px; color:#aaa; }
         .skeleton { background:linear-gradient(90deg,#f0ede8 25%,#e8e6e1 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:4px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .click-hint { display:flex; align-items:center; gap:8px; font-size:13px; color:#5b7cfa; margin-bottom:12px; }
+        .click-hint-icon { animation:pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:0.6; transform:scale(0.95); } }
       `}</style>
 
       <header className="header-bar">
@@ -270,7 +272,7 @@ function RankingsContent() {
       <div className="hero">
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div className="hero-eyebrow">📊 FY2024-2025 • DOL Public Data</div>
-          <h1>U.S. H1B Employer Explorer<br /><em>94,623 Companies</em> • Full Database</h1>
+          <h1>H1B Employer Explorer</h1>
           <p className="hero-sub">
             Search H1B employers by industry, job, and location.<br />
             Check green card sponsorship history in one place.
@@ -343,6 +345,10 @@ function RankingsContent() {
           <div className="empty"><h3>No results found</h3><p>Try a different keyword or filter.</p></div>
         ) : (
           <>
+            <div className="click-hint">
+              <span className="click-hint-icon">👆</span>
+              <span>Click any company to see detailed insights & work locations</span>
+            </div>
             <table className="co-table">
               <thead>
                 <tr><th>#</th><th>Company</th><th>LCA Filings •</th><th>Avg Salary</th><th>Hiring Trend</th><th>Green Card</th><th>Top States</th></tr>
@@ -430,7 +436,7 @@ function RankingsContent() {
                         {location.worksite_state}
                       </div>
                       <div style={{ fontSize: 13, color: '#333', marginTop: 4 }}>
-                        {location.lca_count.toLocaleString()}건
+                        {location.lca_count.toLocaleString()} cases
                       </div>
                       <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>
                         #{idx + 1}
