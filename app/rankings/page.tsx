@@ -24,7 +24,12 @@ interface Company {
   h1b_ratio: number;
   has_perm?: boolean;
 }
- 
+
+interface WorksiteLocation {
+  worksite_state: string;
+  lca_count: number;
+}
+
 const SECTOR_LABELS: Record<string, string> = {
   ACCOUNTING: "Accounting", ADMIN_SUPPORT: "Admin & Support", ADVERTISING_PR: "Advertising & PR",
   AEROSPACE_MFG: "Aerospace", AGRICULTURE: "Agriculture", AI_DIGITAL_PLATFORMS: "AI & Digital",
@@ -49,31 +54,31 @@ const SECTOR_LABELS: Record<string, string> = {
   TELECOM: "Telecom", TRANSPORTATION: "Transportation & Logistics",
   UNIVERSITIES: "Universities & Research", UTILITIES: "Utilities", WHOLESALE: "Wholesale",
 };
- 
+
 const POPULAR_SECTORS = [
   "SOFTWARE_PRODUCTS", "IT_SERVICES", "INTERNET_PLATFORMS", "CONSULTING", "BANKING",
   "ACCOUNTING", "SEMICONDUCTOR_MFG", "ENGINEERING_SERVICES", "CLOUD_DATA", "PHARMA_MFG",
 ];
- 
+
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
   "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
   "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY",
 ];
- 
+
 const TREND_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   INCREASING: { label: "↗ Growing",   color: "#10b981", bg: "rgba(16,185,129,0.1)" },
   STABLE:     { label: "→ Stable",    color: "#6366f1", bg: "rgba(99,102,241,0.1)" },
   DECREASING: { label: "↘ Declining", color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
-  NEW:        { label: "★ New",       color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
+  NEW:        { label: "✨ New",       color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
   STOPPED:    { label: "⊗ Stopped",   color: "#aaa",    bg: "rgba(170,170,170,0.1)" },
 };
- 
+
 const PAGE_SIZE = 50;
- 
+
 function RankingsContent() {
   const searchParams = useSearchParams();
- 
+
   const [companies, setCompanies]     = useState<Company[]>([]);
   const [total, setTotal]             = useState(0);
   const [loading, setLoading]         = useState(false);
@@ -85,14 +90,42 @@ function RankingsContent() {
   const [trendFilter, setTrendFilter] = useState("");
   const [activeRow, setActiveRow]     = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
- 
+  const [worksiteBreakdown, setWorksiteBreakdown] = useState<WorksiteLocation[]>([]);
+
   useEffect(() => {
     const t = setTimeout(() => { setSearch(searchInput); setPage(0); }, 350);
     return () => clearTimeout(t);
   }, [searchInput]);
- 
+
   useEffect(() => { setPage(0); }, [sector, stateFilter, permOnly, trendFilter]);
- 
+
+  // 회사 클릭 시 주별 건수 조회
+  useEffect(() => {
+    async function fetchWorksiteData() {
+      if (!activeRow) {
+        setWorksiteBreakdown([]);
+        return;
+      }
+      
+      try {
+        const { data } = await supabase
+          .from('company_worksite_breakdown')
+          .select('worksite_state, lca_count')
+          .eq('employer_name', activeRow.toUpperCase())
+          .order('lca_count', { ascending: false })
+          .limit(3);
+        
+        if (data) {
+          setWorksiteBreakdown(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch worksite data:', err);
+      }
+    }
+    
+    fetchWorksiteData();
+  }, [activeRow]);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -101,11 +134,11 @@ function RankingsContent() {
         .select("*", { count: "exact" })
         .order("lca_total_2yr", { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
- 
+
       if (search)      query = query.ilike("employer_name", `%${search}%`);
       if (sector)      query = query.eq("sector", sector);
       if (trendFilter) query = query.eq("lca_trend", trendFilter);
- 
+
       if (stateFilter) {
         query = query.or(
           `top3_worksite_states.like.${stateFilter}|%,` +
@@ -114,9 +147,9 @@ function RankingsContent() {
           `top3_worksite_states.eq.${stateFilter}`
         );
       }
- 
+
       if (permOnly) query = query.eq("has_perm", true);
- 
+
       const { data, count, error } = await query;
       if (error) throw error;
       setCompanies(data ?? []);
@@ -127,18 +160,18 @@ function RankingsContent() {
       setLoading(false);
     }
   }, [search, sector, stateFilter, permOnly, trendFilter, page]);
- 
+
   useEffect(() => { fetchData(); }, [fetchData]);
- 
+
   const resetFilters = () => {
     setSearchInput(""); setSearch(""); setSector("");
     setStateFilter(""); setPermOnly(false); setTrendFilter(""); setPage(0);
   };
- 
+
   const hasFilter = search || sector || stateFilter || permOnly || trendFilter;
   const activeCompany = companies.find((c) => c.employer_name === activeRow);
   const top3States = (raw: string) => raw ? raw.split("|").filter(Boolean) : [];
- 
+
   return (
     <div style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", background: "#f8f7f4", minHeight: "100vh", color: "#1a1a1a" }}>
       <style>{`
@@ -222,7 +255,7 @@ function RankingsContent() {
         .skeleton { background:linear-gradient(90deg,#f0ede8 25%,#e8e6e1 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:4px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
       `}</style>
- 
+
       <header className="header-bar">
         <div className="logo">Study<span>Career</span></div>
         <nav className="nav-links">
@@ -233,11 +266,11 @@ function RankingsContent() {
           <a href="/visa">Visa Calculator</a>
         </nav>
       </header>
- 
+
       <div className="hero">
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
-          <div className="hero-eyebrow">● FY2024-2025 · DOL Public Data</div>
-          <h1>U.S. H1B Employer Explorer<br /><em>94,623 Companies</em> — Full Database</h1>
+          <div className="hero-eyebrow">📊 FY2024-2025 • DOL Public Data</div>
+          <h1>U.S. H1B Employer Explorer<br /><em>94,623 Companies</em> • Full Database</h1>
           <p className="hero-sub">
             Search H1B employers by industry, job, and location.<br />
             Check green card sponsorship history in one place.
@@ -257,12 +290,12 @@ function RankingsContent() {
           </div>
         </div>
       </div>
- 
+
       <div className="section" style={{ paddingTop: 28 }}>
         <div className="search-row">
           <div className="search-wrap">
             <span className="search-icon">🔍</span>
-            <input className="search-input" placeholder="Search company — Amazon, Google, Deloitte..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
+            <input className="search-input" placeholder="Search company • Amazon, Google, Deloitte..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
           </div>
           <select className="filter-select" value={sector} onChange={(e) => setSector(e.target.value)} style={{ minWidth: 170 }}>
             <option value="">All Industries</option>
@@ -291,15 +324,15 @@ function RankingsContent() {
           ))}
         </div>
       </div>
- 
+
       <div className="meta-row">
         <p className="meta-count">
-          {loading ? "Searching..." : <><strong>{total.toLocaleString()}</strong> companies {page > 0 && `· Page ${page + 1}`}</>}
-          {hasFilter && <> · <span className="reset-link" onClick={resetFilters}>Clear filters</span></>}
+          {loading ? "Searching..." : <><strong>{total.toLocaleString()}</strong> companies {page > 0 && `• Page ${page + 1}`}</>}
+          {hasFilter && <> • <span className="reset-link" onClick={resetFilters}>Clear filters</span></>}
         </p>
         <span className="sort-note">Sorted by LCA filings</span>
       </div>
- 
+
       <div className="table-wrap">
         {loading ? (
           <table className="co-table">
@@ -312,7 +345,7 @@ function RankingsContent() {
           <>
             <table className="co-table">
               <thead>
-                <tr><th>#</th><th>Company</th><th>LCA Filings ↓</th><th>Avg Salary</th><th>Hiring Trend</th><th>Green Card</th><th>Top States</th></tr>
+                <tr><th>#</th><th>Company</th><th>LCA Filings •</th><th>Avg Salary</th><th>Hiring Trend</th><th>Green Card</th><th>Top States</th></tr>
               </thead>
               <tbody>
                 {companies.map((c, i) => {
@@ -324,10 +357,10 @@ function RankingsContent() {
                     <tr key={c.employer_name} className={isActive ? "row-active" : ""} onClick={() => setActiveRow(isActive ? null : c.employer_name)}>
                       <td><span className="rank-num">{rank}</span></td>
                       <td><div className="co-name">{c.employer_name}</div><div className="co-sector">{SECTOR_LABELS[c.sector] ?? c.sector}</div></td>
-                      <td><div className="num">{c.lca_total_2yr.toLocaleString()}</div><div className="num-sub">{c.lca_fy2024.toLocaleString()} → {c.lca_fy2025.toLocaleString()}</div></td>
+                      <td><div className="num">{c.lca_total_2yr.toLocaleString()}</div><div className="num-sub">{c.lca_fy2024.toLocaleString()} • {c.lca_fy2025.toLocaleString()}</div></td>
                       <td><div className="num">{c.avg_salary_fy2025 ? `$${Math.round(c.avg_salary_fy2025/1000)}K` : "—"}</div>{c.p75_salary_fy2025 > 0 && <div className="num-sub">P75 ${Math.round(c.p75_salary_fy2025/1000)}K</div>}</td>
                       <td><span className="trend-badge" style={{ color:t.color, background:t.bg }}>{t.label}</span></td>   
-                      <td>{c.has_perm ? <span className="perm-yes">✓ Yes</span> : <span className="perm-no">◯ No</span>}</td>
+                      <td>{c.has_perm ? <span className="perm-yes">✓ Yes</span> : <span className="perm-no">× No</span>}</td>
                       <td><div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>{states.map((s,idx) => <span key={s} className={`state-tag ${stateFilter===s?"state-tag-active":""}`} style={idx===0&&!stateFilter?{background:"#e8e6e1",color:"#444"}:{}}>{s}</span>)}</div></td>
                     </tr>
                   );
@@ -343,13 +376,13 @@ function RankingsContent() {
                   return <button key={p} className={`page-btn ${p===page?"current":""}`} onClick={() => setPage(p)}>{p+1}</button>;
                 })}
                 <button className="page-btn" disabled={page>=Math.ceil(total/PAGE_SIZE)-1} onClick={() => setPage(page+1)}>Next →</button>
-                <span className="page-info">Page {page+1} / {Math.ceil(total/PAGE_SIZE)} · {total.toLocaleString()} total</span>
+                <span className="page-info">Page {page+1} / {Math.ceil(total/PAGE_SIZE)} • {total.toLocaleString()} total</span>
               </div>
             )}
           </>
         )}
       </div>
- 
+
       {activeCompany && (() => {
         const c = activeCompany;
         const t = TREND_CONFIG[c.lca_trend] ?? TREND_CONFIG.STABLE;
@@ -357,9 +390,9 @@ function RankingsContent() {
         return (
           <div className="panel open">
             <div className="panel-inner">
-              <button className="panel-close" onClick={() => setActiveRow(null)}>×</button>
+              <button className="panel-close" onClick={() => setActiveRow(null)}>✕</button>
               <div className="panel-name">{c.employer_name}</div>
-              <div className="panel-sub">{SECTOR_LABELS[c.sector] ?? c.sector} · {states.join(", ")}</div>
+              <div className="panel-sub">{SECTOR_LABELS[c.sector] ?? c.sector} • {states.join(", ")}</div>
               <div className="metric-grid">
                 <div className="metric-card"><div className="metric-label">LCA Filings</div><div className="metric-val">{(c.lca_total_2yr/1000).toFixed(1)}K</div><div className="metric-hint">FY2024-2025 combined</div></div>
                 <div className="metric-card"><div className="metric-label">Avg Salary</div><div className="metric-val">{c.avg_salary_fy2025?`$${Math.round(c.avg_salary_fy2025/1000)}K`:"—"}</div><div className="metric-hint">FY2025</div></div>     
@@ -381,10 +414,10 @@ function RankingsContent() {
                   Actual worksites where H1B employees are placed
                 </div>
               </div>
-              {states.length > 0 ? (
+              {worksiteBreakdown.length > 0 ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                  {states.map((state, idx) => (
-                    <div 
+                  {worksiteBreakdown.map((location, idx) => (
+                    <div
                       key={idx}
                       style={{
                         background: '#f8f7f4',
@@ -393,22 +426,25 @@ function RankingsContent() {
                         textAlign: 'center'
                       }}
                     >
-                      <div style={{ fontSize: 18, fontWeight: 600, color: '#2563eb' }}>
-                        {state.trim()}
+                      <div style={{ fontSize: 14, fontWeight: 500 }}>
+                        {location.worksite_state}
                       </div>
-                      <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>
+                      <div style={{ fontSize: 13, color: '#333', marginTop: 4 }}>
+                        {location.lca_count.toLocaleString()}건
+                      </div>
+                      <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>
                         #{idx + 1}
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div style={{ 
-                  background: '#f8f7f4', 
-                  borderRadius: 10, 
-                  padding: 12, 
-                  fontSize: 13, 
-                  color: '#666' 
+                <div style={{
+                  background: '#f8f7f4',
+                  borderRadius: 10,
+                  padding: 12,
+                  fontSize: 13,
+                  color: '#666'
                 }}>
                   Location data not available
                 </div>
@@ -416,10 +452,10 @@ function RankingsContent() {
               <div className="panel-section">Insight</div>
               <div className="insight-box">
                 {c.has_perm ? "This employer has both H1B hiring activity and green card sponsorship history — a strong long-term career option." : "Active H1B hirer but no green card sponsorship history. Plan for future employer transfer if green card is a priority."}
-                {c.lca_trend === "INCREASING" && " Hiring is growing — good timing to apply."}
-                {c.lca_trend === "DECREASING" && " Hiring is declining — check current openings before applying."}
+                {c.lca_trend === "INCREASING" && " Hiring is growing • good timing to apply."}
+                {c.lca_trend === "DECREASING" && " Hiring is declining • check current openings before applying."}
               </div>
-              <button 
+              <button
                 className="panel-btn"
                 onClick={() => {
                   const slug = c.employer_name
@@ -438,7 +474,7 @@ function RankingsContent() {
     </div>
   );
 }
- 
+
 export default function RankingsPage() {
   return (
     <Suspense fallback={<div style={{ padding: 40, fontFamily: "sans-serif", color: "#999" }}>Loading...</div>}>
